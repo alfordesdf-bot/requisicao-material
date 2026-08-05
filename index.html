@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Requisição de Material e Ferramentas</title>
+  <!-- Ligação ao ficheiro CSS externo -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Requisição de Ferramentas e EPIs</h1>
+    <p>Selecione o material necessário para a produção e indique a quantidade desejada.</p>
+  </header>
+
+  <main class="catalog-grid">
+
+    <!-- Cartão 1: Pasta EPI -->
+    <article class="card">
+      <div class="card-image">
+        <img src="fotos/EPI/artigo1.jpg" alt="Luvas de Proteção Mecânica">
+      </div>
+      <div class="card-content">
+        <span class="tag">Segurança / EPI</span>
+        <h2 class="card-title">Luvas de Proteção</h2>
+        <p class="card-description">Luvas resistentes a corte e abrasão para manuseamento de cargas e trabalho em fábrica.</p>
+        <div class="card-actions">
+          <input type="number" class="quantity-input" value="1" min="1" aria-label="Quantidade">
+          <button class="btn-request">Solicitar</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Cartão 2: Pasta ferramentas -->
+    <article class="card">
+      <div class="card-image">
+        <img src="fotos/ferramentas/artigo1.jpg" alt="Aparafusadora de Impacto">
+      </div>
+      <div class="card-content">
+        <span class="tag">Máquinas / Produção</span>
+        <h2 class="card-title">Aparafusadora 18V</h2>
+        <p class="card-description">Ferramenta elétrica sem fios para linhas de montagem e manutenção geral.</p>
+        <div class="card-actions">
+          <input type="number" class="quantity-input" value="1" min="1" aria-label="Quantidade">
+          <button class="btn-request">Solicitar</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Cartão 3: Pasta ferramentas -->
+    <article class="card">
+      <div class="card-image">
+        <img src="fotos/ferramentas/artigo2.jpg" alt="Kit Parafusos M6">
+      </div>
+      <div class="card-content">
+        <span class="tag">Parafusaria / Consumíveis</span>
+        <h2 class="card-title">Caixa Parafusos M6x20</h2>
+        <p class="card-description">Caixa de 100 unidades em aço inoxidável com cabeça cilíndrica sextavada interior.</p>
+        <div class="card-actions">
+          <input type="number" class="quantity-input" value="1" min="1" aria-label="Quantidade">
+          <button class="btn-request">Solicitar</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Cartão 4: Pasta EPI -->
+    <article class="card">
+      <div class="card-image">
+        <img src="fotos/EPI/artigo2.jpg" alt="Óculos de Proteção">
+      </div>
+      <div class="card-content">
+        <span class="tag">Segurança / EPI</span>
+        <h2 class="card-title">Óculos de Proteção</h2>
+        <p class="card-description">Óculos em policarbonato com tratamento anti-risco e anti-embaciamento.</p>
+        <div class="card-actions">
+          <input type="number" class="quantity-input" value="1" min="1" aria-label="Quantidade">
+          <button class="btn-request">Solicitar</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Cartão 5: Pasta caderno_caneta -->
+    <article class="card">
+      <div class="card-image">
+        <img src="fotos/caderno_caneta/artigo1.jpg" alt="Bloco de Notas A5 e Caneta">
+      </div>
+      <div class="card-content">
+        <span class="tag">Escritório / Apoio</span>
+        <h2 class="card-title">Bloco A5 + Caneta</h2>
+        <p class="card-description">Kit de apontamentos para registo diário de produção e controlo de qualidade.</p>
+        <div class="card-actions">
+          <input type="number" class="quantity-input" value="1" min="1" aria-label="Quantidade">
+          <button class="btn-request">Solicitar</button>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+</body>
+</html>
