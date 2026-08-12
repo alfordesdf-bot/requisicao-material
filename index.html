@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de Requisição - Universal Motors</title>
+  <!-- Ligação crucial ao CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +16,7 @@
       <hr class="divider">
       <p class="login-question">Quem está a solicitar o material?</p>
       <div class="login-form">
-        <input type="text" id="username-input" class="input-dark" placeholder="Digite o seu nome..." autocomplete="off">
+        <input type="text" id="username-input" class="input-dark" placeholder="Digite o seu nome completo..." autocomplete="off">
         <button id="btn-login" class="btn-gold">Continuar</button>
       </div>
     </div>
@@ -110,7 +111,7 @@
     </div>
   </div>
 
-  <!-- ECRÃ DE RESUMO DO PEDIDO (Oculto até submeter) -->
+  <!-- ECRÃ DE RESUMO DO PEDIDO -->
   <div id="summary-overlay" class="login-overlay hidden">
     <div class="login-card" style="max-width: 500px;">
       <h1 class="brand-title">Requisição Concluída</h1>
@@ -119,13 +120,14 @@
         <p><strong>Colaborador:</strong> <span id="final-username"></span></p>
         <p><strong>Materiais Solicitados:</strong></p>
         <ul id="summary-list" class="summary-list">
-          <!-- O JavaScript vai injetar a lista aqui -->
+          <!-- O JavaScript injeta a lista aqui -->
         </ul>
       </div>
       <button id="btn-new-order" class="btn-gold" style="margin-top: 1.5rem; width: 100%;">Fazer Nova Requisição</button>
     </div>
   </div>
 
+  <!-- Ligação crucial ao JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
