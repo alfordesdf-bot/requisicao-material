@@ -1,0 +1,61 @@
+/* NOVOS ESTILOS PARA INTERATIVIDADE E RESUMO */
+.btn-large {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  margin-top: 2.5rem;
+  background-color: var(--gold-primary);
+  color: #000;
+}
+
+.btn-large:hover {
+  background-color: var(--gold-hover);
+  border-color: var(--gold-hover);
+}
+
+.submit-container {
+  display: flex;
+  justify-content: center;
+}
+
+.summary-details {
+  text-align: left;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.summary-details p {
+  margin-bottom: 0.5rem;
+}
+
+.summary-details strong {
+  color: var(--gold-primary);
+}
+
+.summary-list {
+  list-style-type: none;
+  margin-top: 1rem;
+  background-color: var(--input-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.summary-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary-list li:last-child {
+  border-bottom: none;
+}
+
+.item-added {
+  background-color: #22c55e !important; /* Verde ao adicionar */
+  border-color: #22c55e !important;
+  color: white !important;
+}
