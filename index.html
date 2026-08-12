@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de Requisição - Universal Motors</title>
-  <!-- Ligação crucial ao CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ECRÃ INICIAL: IDENTIFICAÇÃO DO COLABORADOR -->
+  <!-- ECRÃ DE LOGIN -->
   <div id="login-overlay" class="login-overlay">
     <div class="login-card">
       <h1 class="brand-title">UNIVERSAL MOTORS</h1>
@@ -27,9 +26,12 @@
     <header>
       <h1 class="brand-title">REQUISIÇÃO DE MATERIAL</h1>
       <hr class="divider">
-      <div class="user-badge">
-        <span>Colaborador: <strong id="display-username">--</strong></span>
-        <button id="btn-logout" class="btn-link">Trocar utilizador</button>
+      <div class="header-actions">
+        <div class="user-badge">
+          <span>Colaborador: <strong id="display-username">--</strong></span>
+          <button id="btn-logout" class="btn-link">Sair</button>
+        </div>
+        <button id="btn-ver-historico" class="btn-outline-gold">Ver Histórico de Pedidos</button>
       </div>
     </header>
 
@@ -40,10 +42,9 @@
         <div class="card-content">
           <span class="tag">Segurança / EPI</span>
           <h2 class="card-title">Luvas de Proteção</h2>
-          <p class="card-description">Luvas resistentes a corte e abrasão para fábrica.</p>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Solicitar</button>
+            <button class="btn-gold btn-add-item">Adicionar</button>
           </div>
         </div>
       </article>
@@ -54,80 +55,70 @@
         <div class="card-content">
           <span class="tag">Máquinas / Produção</span>
           <h2 class="card-title">Aparafusadora 18V</h2>
-          <p class="card-description">Ferramenta elétrica sem fios para linhas de montagem.</p>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Solicitar</button>
+            <button class="btn-gold btn-add-item">Adicionar</button>
           </div>
         </div>
       </article>
 
       <!-- Cartão 3 -->
       <article class="card">
-        <div class="card-image"><img src="fotos/ferramentas/artigo2.jpg" alt="Caixa Parafusos M6"></div>
-        <div class="card-content">
-          <span class="tag">Parafusaria</span>
-          <h2 class="card-title">Caixa Parafusos M6x20</h2>
-          <p class="card-description">Caixa de 100 unidades em aço inoxidável.</p>
-          <div class="card-actions">
-            <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Solicitar</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Cartão 4 -->
-      <article class="card">
-        <div class="card-image"><img src="fotos/EPI/artigo2.jpg" alt="Óculos de Proteção"></div>
-        <div class="card-content">
-          <span class="tag">Segurança / EPI</span>
-          <h2 class="card-title">Óculos de Proteção</h2>
-          <p class="card-description">Óculos em policarbonato anti-risco.</p>
-          <div class="card-actions">
-            <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Solicitar</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Cartão 5 -->
-      <article class="card">
         <div class="card-image"><img src="fotos/caderno_caneta/artigo1.jpg" alt="Bloco e Caneta"></div>
         <div class="card-content">
           <span class="tag">Escritório / Apoio</span>
           <h2 class="card-title">Bloco A5 + Caneta</h2>
-          <p class="card-description">Kit de apontamentos para registo diário de produção.</p>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Solicitar</button>
+            <button class="btn-gold btn-add-item">Adicionar</button>
           </div>
         </div>
       </article>
     </main>
 
-    <!-- Botão de finalizar pedido -->
     <div class="submit-container">
-      <button id="btn-submit-order" class="btn-gold btn-large">Finalizar Requisição</button>
+      <button id="btn-submit-order" class="btn-gold btn-large">Submeter Requisição</button>
     </div>
   </div>
 
-  <!-- ECRÃ DE RESUMO DO PEDIDO -->
+  <!-- ECRÃ DE RESUMO DO PEDIDO (Igual à tua imagem) -->
   <div id="summary-overlay" class="login-overlay hidden">
-    <div class="login-card" style="max-width: 500px;">
-      <h1 class="brand-title">Requisição Concluída</h1>
+    <div class="login-card summary-card-layout">
+      <h1 class="brand-title">REQUISIÇÃO CONCLUÍDA</h1>
       <hr class="divider">
       <div class="summary-details">
-        <p><strong>Colaborador:</strong> <span id="final-username"></span></p>
-        <p><strong>Materiais Solicitados:</strong></p>
-        <ul id="summary-list" class="summary-list">
-          <!-- O JavaScript injeta a lista aqui -->
-        </ul>
+        <p class="summary-info"><span class="label-gold">Colaborador:</span> <span id="final-username"></span></p>
+        <p class="summary-info"><span class="label-gold">Materiais Solicitados:</span></p>
+        
+        <!-- Caixa escura da lista de materiais -->
+        <div class="dark-box-list">
+          <ul id="summary-list" class="summary-list">
+            <!-- JS injeta aqui -->
+          </ul>
+        </div>
       </div>
-      <button id="btn-new-order" class="btn-gold" style="margin-top: 1.5rem; width: 100%;">Fazer Nova Requisição</button>
+      
+      <div class="summary-buttons">
+        <button id="btn-edit-order" class="btn-outline-gold">Editar Requisição</button>
+        <button id="btn-new-order" class="btn-gold">Nova Requisição</button>
+      </div>
     </div>
   </div>
 
-  <!-- Ligação crucial ao JavaScript -->
+  <!-- ECRÃ DE HISTÓRICO (Dashboard) -->
+  <div id="historico-overlay" class="login-overlay hidden">
+    <div class="login-card" style="max-width: 800px; width: 90%;">
+      <h1 class="brand-title">HISTÓRICO DE REQUISIÇÕES</h1>
+      <hr class="divider">
+      
+      <div id="historico-container" class="historico-container">
+        <!-- JS injeta os cartões de histórico aqui -->
+      </div>
+
+      <button id="btn-voltar-catalogo" class="btn-outline-gold" style="margin-top: 2rem;">Voltar ao Catálogo</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
