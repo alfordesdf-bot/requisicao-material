@@ -120,16 +120,17 @@ btnSubmitOrder.addEventListener('click', () => {
     colaborador: nomeColaborador,
     materiais: materiaisTexto
   };
-
-  // Enviar para o Google Sheets
+ 
+    // Enviar para o Google Sheets
   fetch(GOOGLE_SHEETS_URL, {
     method: "POST",
     mode: "no-cors", 
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "text/plain;charset=utf-8"
     },
     body: JSON.stringify(dadosSheet)
   })
+
   .then(() => {
     mainPortal.classList.add('hidden');
     summaryOverlay.classList.remove('hidden');
