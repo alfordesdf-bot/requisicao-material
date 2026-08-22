@@ -20,7 +20,7 @@ const summaryList = document.getElementById('summary-list');
 const historicoContainer = document.getElementById('historico-container');
 
 // O famoso link que estava a brincar às escondidas
-const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyNGjv0TPi5gCaCdxxv1JLQ2TphoZljvScyQgqf_qq0YK6fFjqVuiDCzS04ltO4yHjR2A/exec";
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxHM3FMD6_wzy7MWyC6YRCR8F20wX2WaAdvtvQcOcMgi3KjoYX7mYvEZmnzDyLEuO8-2A/exec";
 
 // VARIÁVEIS GLOBAIS
 let carrinho = [];
