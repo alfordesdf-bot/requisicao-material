@@ -1,4 +1,3 @@
-
 // ELEMENTOS DO DOM
 const loginOverlay = document.getElementById('login-overlay');
 const mainPortal = document.getElementById('main-portal');
@@ -11,6 +10,7 @@ const displayUsername = document.getElementById('display-username');
 const finalUsername = document.getElementById('final-username');
 
 const btnSubmitOrder = document.getElementById('btn-submit-order');
+const btnVerPedido = document.getElementById('btn-ver-pedido'); // NOVO BOTÃO
 const btnNewOrder = document.getElementById('btn-new-order');
 const btnEditOrder = document.getElementById('btn-edit-order');
 const btnVerHistorico = document.getElementById('btn-ver-historico');
@@ -18,8 +18,9 @@ const btnVoltarCatalogo = document.getElementById('btn-voltar-catalogo');
 
 const summaryList = document.getElementById('summary-list');
 const historicoContainer = document.getElementById('historico-container');
+const orderNotes = document.getElementById('order-notes'); // NOVA CAIXA DE TEXTO
 
-// O famoso link que estava a brincar às escondidas
+// COLA AQUI O TEU LINK DO GOOGLE SHEETS
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxHM3FMD6_wzy7MWyC6YRCR8F20wX2WaAdvtvQcOcMgi3KjoYX7mYvEZmnzDyLEuO8-2A/exec";
 
 // VARIÁVEIS GLOBAIS
@@ -46,6 +47,7 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   loginOverlay.classList.remove('hidden');
   usernameInput.value = "";
   carrinho = [];
+  orderNotes.value = ""; // Limpa as notas ao sair
 });
 
 // 2. ADICIONAR MATERIAL
@@ -76,14 +78,33 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   });
 });
 
-// 3. SUBMETER REQUISIÇÃO (Google Sheets + Histórico Local)
+// 2.5 VER PEDIDO (NOVO BOTÃO)
+btnVerPedido.addEventListener('click', () => {
+  if (carrinho.length === 0) {
+    alert("O carrinho está vazio. Adicione material primeiro.");
+    return;
+  }
+  
+  let resumoTexto = "🛒 O SEU PEDIDO ATUAL:\n\n";
+  carrinho.forEach(item => {
+    resumoTexto += `• ${item.quantidade}x ${item.nome}\n`;
+  });
+  
+  if (orderNotes.value.trim() !== "") {
+    resumoTexto += `\n📝 Observações:\n${orderNotes.value.trim()}`;
+  }
+  
+  alert(resumoTexto);
+});
+
+// 3. SUBMETER REQUISIÇÃO
 btnSubmitOrder.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio.");
     return;
   }
 
-  btnSubmitOrder.innerText = "A guardar pedido...";
+  btnSubmitOrder.innerText = "A guardar...";
   btnSubmitOrder.disabled = true;
 
   finalUsername.textContent = nomeColaborador;
@@ -94,34 +115,42 @@ btnSubmitOrder.addEventListener('click', () => {
     const li = document.createElement('li');
     li.innerHTML = `<span>${item.nome}</span> <strong>x${item.quantidade}</strong>`;
     summaryList.appendChild(li);
-    // Formata o texto para ficar direito nas células do Excel
     materiaisTexto += `${item.quantidade}x ${item.nome}\n`;
   });
+
+  // Anexar as observações ao texto dos materiais para o Excel não dar tilt
+  const notasAdicionais = orderNotes.value.trim();
+  if (notasAdicionais !== "") {
+    materiaisTexto += `\n[OBSERVAÇÕES]: ${notasAdicionais}`;
+    
+    // Mostra as observações também no ecrã de resumo final
+    const liObs = document.createElement('li');
+    liObs.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">Obs: ${notasAdicionais}</span>`;
+    summaryList.appendChild(liObs);
+  }
 
   const pedidoID = Date.now();
   const dataAtual = new Date().toLocaleString('pt-PT');
 
-  // Guardar no "Banco de Dados Local" (localStorage para o histórico)
   const pedido = {
     id: pedidoID,
     colaborador: nomeColaborador,
     data: dataAtual,
-    itens: [...carrinho]
+    itens: [...carrinho],
+    observacoes: notasAdicionais
   };
   
   const historicoAntigo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
   historicoAntigo.push(pedido);
   localStorage.setItem('historicoRequisicoes', JSON.stringify(historicoAntigo));
 
-  // Dados para o Google Sheets
   const dadosSheet = {
     id: pedidoID,
     data: dataAtual,
     colaborador: nomeColaborador,
     materiais: materiaisTexto
   };
- 
-    // Enviar para o Google Sheets
+
   fetch(GOOGLE_SHEETS_URL, {
     method: "POST",
     mode: "no-cors", 
@@ -130,29 +159,29 @@ btnSubmitOrder.addEventListener('click', () => {
     },
     body: JSON.stringify(dadosSheet)
   })
-
   .then(() => {
     mainPortal.classList.add('hidden');
     summaryOverlay.classList.remove('hidden');
-    btnSubmitOrder.innerText = "Submeter Requisição";
+    btnSubmitOrder.innerText = "Submeter";
     btnSubmitOrder.disabled = false;
   })
   .catch(error => {
     alert("Erro de ligação ao Excel. O pedido ficou salvo no histórico local.");
-    btnSubmitOrder.innerText = "Submeter Requisição";
+    btnSubmitOrder.innerText = "Submeter";
     btnSubmitOrder.disabled = false;
   });
 });
 
-// 4. EDITAR REQUISIÇÃO (Volta ao ecrã com os dados do carrinho lá guardados)
+// 4. EDITAR REQUISIÇÃO
 btnEditOrder.addEventListener('click', () => {
   summaryOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
 });
 
-// 5. NOVA REQUISIÇÃO (Zera tudo)
+// 5. NOVA REQUISIÇÃO
 btnNewOrder.addEventListener('click', () => {
   carrinho = [];
+  orderNotes.value = "";
   summaryOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
 });
@@ -165,9 +194,9 @@ btnVerHistorico.addEventListener('click', () => {
   if (historicoSalvo.length === 0) {
     historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
   } else {
-    // Inverter para mostrar os mais recentes primeiro
     historicoSalvo.reverse().forEach(pedido => {
       let itensHTML = pedido.itens.map(i => `<li>${i.nome} - <span style="color:var(--gold-primary)">x${i.quantidade}</span></li>`).join('');
+      let obsHTML = pedido.observacoes ? `<p style="margin-top: 5px; font-size: 0.85rem; color: var(--text-muted);"><em>Obs: ${pedido.observacoes}</em></p>` : "";
       
       const div = document.createElement('div');
       div.className = 'historico-item';
@@ -177,6 +206,7 @@ btnVerHistorico.addEventListener('click', () => {
         <ul style="margin-top: 10px; list-style: inside; color: var(--text-muted); font-size: 0.9rem;">
           ${itensHTML}
         </ul>
+        ${obsHTML}
       `;
       historicoContainer.appendChild(div);
     });
