@@ -36,7 +36,6 @@
     </header>
 
     <main class="catalog-grid">
-      <!-- Cartão 1 -->
       <article class="card">
         <div class="card-image"><img src="fotos/EPI/artigo1.jpg" alt="Luvas de Proteção"></div>
         <div class="card-content">
@@ -49,7 +48,6 @@
         </div>
       </article>
 
-      <!-- Cartão 2 -->
       <article class="card">
         <div class="card-image"><img src="fotos/ferramentas/artigo1.jpg" alt="Aparafusadora 18V"></div>
         <div class="card-content">
@@ -62,7 +60,6 @@
         </div>
       </article>
 
-      <!-- Cartão 3 -->
       <article class="card">
         <div class="card-image"><img src="fotos/caderno_caneta/artigo1.jpg" alt="Bloco e Caneta"></div>
         <div class="card-content">
@@ -76,12 +73,19 @@
       </article>
     </main>
 
-    <div class="submit-container">
-      <button id="btn-submit-order" class="btn-gold btn-large">Submeter Requisição</button>
+    <!-- NOVA SECÇÃO: Observações e Botões Duplos -->
+    <div class="observations-container" style="margin-top: 2rem; background-color: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <label for="order-notes" class="brand-title" style="display: block; font-size: 1rem; margin-bottom: 1rem;">Informação adicional relativa ao pedido</label>
+      <textarea id="order-notes" class="input-dark" rows="4" style="width: 100%; resize: vertical; font-family: inherit;" placeholder="Escreva aqui observações sobre o pedido..."></textarea>
+    </div>
+
+    <div class="submit-container" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+      <button id="btn-ver-pedido" class="btn-outline-gold btn-large" style="margin-top: 0;">Ver Pedido</button>
+      <button id="btn-submit-order" class="btn-gold btn-large" style="margin-top: 0;">Submeter</button>
     </div>
   </div>
 
-  <!-- ECRÃ DE RESUMO DO PEDIDO (Igual à tua imagem) -->
+  <!-- ECRÃ DE RESUMO DO PEDIDO -->
   <div id="summary-overlay" class="login-overlay hidden">
     <div class="login-card summary-card-layout">
       <h1 class="brand-title">REQUISIÇÃO CONCLUÍDA</h1>
@@ -90,7 +94,6 @@
         <p class="summary-info"><span class="label-gold">Colaborador:</span> <span id="final-username"></span></p>
         <p class="summary-info"><span class="label-gold">Materiais Solicitados:</span></p>
         
-        <!-- Caixa escura da lista de materiais -->
         <div class="dark-box-list">
           <ul id="summary-list" class="summary-list">
             <!-- JS injeta aqui -->
@@ -105,7 +108,7 @@
     </div>
   </div>
 
-  <!-- ECRÃ DE HISTÓRICO (Dashboard) -->
+  <!-- ECRÃ DE HISTÓRICO -->
   <div id="historico-overlay" class="login-overlay hidden">
     <div class="login-card" style="max-width: 800px; width: 90%;">
       <h1 class="brand-title">HISTÓRICO DE REQUISIÇÕES</h1>
