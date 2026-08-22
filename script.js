@@ -1,3 +1,4 @@
+
 // ELEMENTOS DO DOM
 const loginOverlay = document.getElementById('login-overlay');
 const mainPortal = document.getElementById('main-portal');
@@ -17,6 +18,9 @@ const btnVoltarCatalogo = document.getElementById('btn-voltar-catalogo');
 
 const summaryList = document.getElementById('summary-list');
 const historicoContainer = document.getElementById('historico-container');
+
+// O famoso link que estava a brincar às escondidas
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyNGjv0TPi5gCaCdxxv1JLQ2TphoZljvScyQgqf_qq0YK6fFjqVuiDCzS04ltO4yHjR2A/exec";
 
 // VARIÁVEIS GLOBAIS
 let carrinho = [];
@@ -72,27 +76,36 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   });
 });
 
-// 3. SUBMETER REQUISIÇÃO E GUARDAR HISTÓRICO
+// 3. SUBMETER REQUISIÇÃO (Google Sheets + Histórico Local)
 btnSubmitOrder.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio.");
     return;
   }
 
-  // Preencher Resumo
+  btnSubmitOrder.innerText = "A guardar pedido...";
+  btnSubmitOrder.disabled = true;
+
   finalUsername.textContent = nomeColaborador;
   summaryList.innerHTML = "";
+  let materiaisTexto = "";
+
   carrinho.forEach(item => {
     const li = document.createElement('li');
     li.innerHTML = `<span>${item.nome}</span> <strong>x${item.quantidade}</strong>`;
     summaryList.appendChild(li);
+    // Formata o texto para ficar direito nas células do Excel
+    materiaisTexto += `${item.quantidade}x ${item.nome}\n`;
   });
 
-  // Guardar no "Banco de Dados Local" (localStorage)
+  const pedidoID = Date.now();
+  const dataAtual = new Date().toLocaleString('pt-PT');
+
+  // Guardar no "Banco de Dados Local" (localStorage para o histórico)
   const pedido = {
-    id: Date.now(),
+    id: pedidoID,
     colaborador: nomeColaborador,
-    data: new Date().toLocaleString('pt-PT'),
+    data: dataAtual,
     itens: [...carrinho]
   };
   
@@ -100,31 +113,53 @@ btnSubmitOrder.addEventListener('click', () => {
   historicoAntigo.push(pedido);
   localStorage.setItem('historicoRequisicoes', JSON.stringify(historicoAntigo));
 
-  // Disparar envio de email (Lógica a integrar)
-  enviarEmailParaResponsavel(pedido);
+  // Dados para o Google Sheets
+  const dadosSheet = {
+    id: pedidoID,
+    data: dataAtual,
+    colaborador: nomeColaborador,
+    materiais: materiaisTexto
+  };
 
-  // Mudar de ecrã
-  mainPortal.classList.add('hidden');
-  summaryOverlay.classList.remove('hidden');
+  // Enviar para o Google Sheets
+  fetch(GOOGLE_SHEETS_URL, {
+    method: "POST",
+    mode: "no-cors", 
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dadosSheet)
+  })
+  .then(() => {
+    mainPortal.classList.add('hidden');
+    summaryOverlay.classList.remove('hidden');
+    btnSubmitOrder.innerText = "Submeter Requisição";
+    btnSubmitOrder.disabled = false;
+  })
+  .catch(error => {
+    alert("Erro de ligação ao Excel. O pedido ficou salvo no histórico local.");
+    btnSubmitOrder.innerText = "Submeter Requisição";
+    btnSubmitOrder.disabled = false;
+  });
 });
 
-// 4. EDITAR REQUISIÇÃO (Volta ao catálogo sem apagar o carrinho)
+// 4. EDITAR REQUISIÇÃO (Volta ao ecrã com os dados do carrinho lá guardados)
 btnEditOrder.addEventListener('click', () => {
   summaryOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
 });
 
-// 5. NOVA REQUISIÇÃO (Limpa tudo)
+// 5. NOVA REQUISIÇÃO (Zera tudo)
 btnNewOrder.addEventListener('click', () => {
   carrinho = [];
   summaryOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
 });
 
-// 6. VER HISTÓRICO (Lê do localStorage e desenha os cartões)
+// 6. VER HISTÓRICO
 btnVerHistorico.addEventListener('click', () => {
   const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
-  historicoContainer.innerHTML = ""; // Limpar lista
+  historicoContainer.innerHTML = ""; 
 
   if (historicoSalvo.length === 0) {
     historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
@@ -155,9 +190,3 @@ btnVoltarCatalogo.addEventListener('click', () => {
   historicoOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
 });
-
-// 7. FUNÇÃO DE EMAIL (Prepara o terreno)
-function enviarEmailParaResponsavel(dadosPedido) {
-  console.log("A preparar envio de email para o armazém...", dadosPedido);
-  // O código real do EmailJS entrará aqui!
-}
