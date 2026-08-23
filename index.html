@@ -43,7 +43,7 @@
           <h2 class="card-title">Luvas de Proteção</h2>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Adicionar</button>
+            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
@@ -55,7 +55,7 @@
           <h2 class="card-title">Aparafusadora 18V</h2>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Adicionar</button>
+            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
@@ -67,25 +67,53 @@
           <h2 class="card-title">Bloco A5 + Caneta</h2>
           <div class="card-actions">
             <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-gold btn-add-item">Adicionar</button>
+            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
     </main>
 
-    <!-- NOVA SECÇÃO: Observações e Botões Duplos -->
+    <!-- SECÇÃO ALINHADA: Observações e Botões -->
     <div class="observations-container" style="margin-top: 2rem; background-color: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
       <label for="order-notes" class="brand-title" style="display: block; font-size: 1rem; margin-bottom: 1rem;">Informação adicional relativa ao pedido</label>
       <textarea id="order-notes" class="input-dark" rows="4" style="width: 100%; resize: vertical; font-family: inherit;" placeholder="Escreva aqui observações sobre o pedido..."></textarea>
     </div>
 
-    <div class="submit-container" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-      <button id="btn-ver-pedido" class="btn-outline-gold btn-large" style="margin-top: 0;">Ver Pedido</button>
-      <button id="btn-submit-order" class="btn-gold btn-large" style="margin-top: 0;">Submeter</button>
+    <!-- BOTÕES AGORA ESTÃO AMBOS DOURADOS SÓLIDOS -->
+    <div class="submit-container">
+      <button id="btn-ver-pedido" class="btn-gold btn-large">Ver Pedido</button>
+      <button id="btn-submit-order" class="btn-gold btn-large">Submeter</button>
     </div>
   </div>
 
-  <!-- ECRÃ DE RESUMO DO PEDIDO -->
+  <!-- NOVO ECRÃ: PRÉ-VISUALIZAÇÃO DO PEDIDO -->
+  <div id="preview-overlay" class="login-overlay hidden">
+    <div class="login-card summary-card-layout">
+      <h1 class="brand-title">RESUMO DO CARRINHO</h1>
+      <hr class="divider">
+      <div class="summary-details">
+        <p class="summary-info"><span class="label-gold">Colaborador:</span> <span id="preview-username"></span></p>
+        <p class="summary-info"><span class="label-gold">Materiais no Pedido:</span></p>
+        
+        <div class="dark-box-list">
+          <ul id="preview-list" class="summary-list">
+            <!-- JS injeta aqui -->
+          </ul>
+        </div>
+
+        <div id="preview-obs-container" class="hidden" style="margin-top: 1rem;">
+          <p class="summary-info"><span class="label-gold">Observações:</span></p>
+          <p id="preview-obs-text" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;"></p>
+        </div>
+      </div>
+      
+      <div class="summary-buttons" style="margin-top: 2rem;">
+        <button id="btn-fechar-preview" class="btn-outline-gold" style="width: 100%;">Voltar à Página Anterior</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECRÃ DE RESUMO FINAL -->
   <div id="summary-overlay" class="login-overlay hidden">
     <div class="login-card summary-card-layout">
       <h1 class="brand-title">REQUISIÇÃO CONCLUÍDA</h1>
@@ -102,8 +130,7 @@
       </div>
       
       <div class="summary-buttons">
-        <button id="btn-edit-order" class="btn-outline-gold">Editar Requisição</button>
-        <button id="btn-new-order" class="btn-gold">Nova Requisição</button>
+        <button id="btn-new-order" class="btn-gold">Fazer Nova Requisição</button>
       </div>
     </div>
   </div>
@@ -115,7 +142,7 @@
       <hr class="divider">
       
       <div id="historico-container" class="historico-container">
-        <!-- JS injeta os cartões de histórico aqui -->
+        <!-- JS injeta aqui -->
       </div>
 
       <button id="btn-voltar-catalogo" class="btn-outline-gold" style="margin-top: 2rem;">Voltar ao Catálogo</button>
