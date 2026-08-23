@@ -2,6 +2,7 @@
 const loginOverlay = document.getElementById('login-overlay');
 const mainPortal = document.getElementById('main-portal');
 const summaryOverlay = document.getElementById('summary-overlay');
+const previewOverlay = document.getElementById('preview-overlay'); 
 const historicoOverlay = document.getElementById('historico-overlay');
 
 const usernameInput = document.getElementById('username-input');
@@ -9,18 +10,24 @@ const btnLogin = document.getElementById('btn-login');
 const displayUsername = document.getElementById('display-username');
 const finalUsername = document.getElementById('final-username');
 
+// Elementos da Pré-visualização (Ver Pedido)
+const previewUsername = document.getElementById('preview-username');
+const previewList = document.getElementById('preview-list');
+const previewObsContainer = document.getElementById('preview-obs-container');
+const previewObsText = document.getElementById('preview-obs-text');
+const btnFecharPreview = document.getElementById('btn-fechar-preview');
+
 const btnSubmitOrder = document.getElementById('btn-submit-order');
-const btnVerPedido = document.getElementById('btn-ver-pedido'); // NOVO BOTÃO
+const btnVerPedido = document.getElementById('btn-ver-pedido'); 
 const btnNewOrder = document.getElementById('btn-new-order');
-const btnEditOrder = document.getElementById('btn-edit-order');
 const btnVerHistorico = document.getElementById('btn-ver-historico');
 const btnVoltarCatalogo = document.getElementById('btn-voltar-catalogo');
 
 const summaryList = document.getElementById('summary-list');
 const historicoContainer = document.getElementById('historico-container');
-const orderNotes = document.getElementById('order-notes'); // NOVA CAIXA DE TEXTO
+const orderNotes = document.getElementById('order-notes'); 
 
-// COLA AQUI O TEU LINK DO GOOGLE SHEETS
+// O TEU LINK DO GOOGLE SHEETS JÁ AQUI CONFIGURADO
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxHM3FMD6_wzy7MWyC6YRCR8F20wX2WaAdvtvQcOcMgi3KjoYX7mYvEZmnzDyLEuO8-2A/exec";
 
 // VARIÁVEIS GLOBAIS
@@ -47,7 +54,7 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   loginOverlay.classList.remove('hidden');
   usernameInput.value = "";
   carrinho = [];
-  orderNotes.value = ""; // Limpa as notas ao sair
+  orderNotes.value = ""; 
 });
 
 // 2. ADICIONAR MATERIAL
@@ -78,23 +85,41 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   });
 });
 
-// 2.5 VER PEDIDO (NOVO BOTÃO)
+// 2.5 VER PEDIDO (Abre a janela limpa com a lista)
 btnVerPedido.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio. Adicione material primeiro.");
     return;
   }
   
-  let resumoTexto = "🛒 O SEU PEDIDO ATUAL:\n\n";
+  // Preencher os dados
+  previewUsername.textContent = nomeColaborador;
+  previewList.innerHTML = "";
+  
   carrinho.forEach(item => {
-    resumoTexto += `• ${item.quantidade}x ${item.nome}\n`;
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${item.nome}</span> <strong>x${item.quantidade}</strong>`;
+    previewList.appendChild(li);
   });
   
-  if (orderNotes.value.trim() !== "") {
-    resumoTexto += `\n📝 Observações:\n${orderNotes.value.trim()}`;
+  // Tratar das observações
+  const notasAdicionais = orderNotes.value.trim();
+  if (notasAdicionais !== "") {
+    previewObsText.textContent = notasAdicionais;
+    previewObsContainer.classList.remove('hidden');
+  } else {
+    previewObsContainer.classList.add('hidden');
   }
   
-  alert(resumoTexto);
+  // Mostrar ecrã de pré-visualização (idêntico ao de submissão final)
+  mainPortal.classList.add('hidden');
+  previewOverlay.classList.remove('hidden');
+});
+
+// Voltar do ecrã de Ver Pedido para o Catálogo
+btnFecharPreview.addEventListener('click', () => {
+  previewOverlay.classList.add('hidden');
+  mainPortal.classList.remove('hidden');
 });
 
 // 3. SUBMETER REQUISIÇÃO
@@ -118,12 +143,9 @@ btnSubmitOrder.addEventListener('click', () => {
     materiaisTexto += `${item.quantidade}x ${item.nome}\n`;
   });
 
-  // Anexar as observações ao texto dos materiais para o Excel não dar tilt
   const notasAdicionais = orderNotes.value.trim();
   if (notasAdicionais !== "") {
     materiaisTexto += `\n[OBSERVAÇÕES]: ${notasAdicionais}`;
-    
-    // Mostra as observações também no ecrã de resumo final
     const liObs = document.createElement('li');
     liObs.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">Obs: ${notasAdicionais}</span>`;
     summaryList.appendChild(liObs);
@@ -172,21 +194,18 @@ btnSubmitOrder.addEventListener('click', () => {
   });
 });
 
-// 4. EDITAR REQUISIÇÃO
-btnEditOrder.addEventListener('click', () => {
-  summaryOverlay.classList.add('hidden');
-  mainPortal.classList.remove('hidden');
-});
-
-// 5. NOVA REQUISIÇÃO
+// 4. NOVA REQUISIÇÃO (Manda o desgraçado de volta para o ecrã inicial de Login)
 btnNewOrder.addEventListener('click', () => {
   carrinho = [];
   orderNotes.value = "";
+  usernameInput.value = ""; // Limpa a caixa de texto do login
+  nomeColaborador = "";
+  
   summaryOverlay.classList.add('hidden');
-  mainPortal.classList.remove('hidden');
+  loginOverlay.classList.remove('hidden');
 });
 
-// 6. VER HISTÓRICO
+// 5. VER HISTÓRICO
 btnVerHistorico.addEventListener('click', () => {
   const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
   historicoContainer.innerHTML = ""; 
