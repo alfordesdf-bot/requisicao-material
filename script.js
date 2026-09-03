@@ -10,7 +10,6 @@ const btnLogin = document.getElementById('btn-login');
 const displayUsername = document.getElementById('display-username');
 const finalUsername = document.getElementById('final-username');
 
-// Elementos da Pré-visualização (Ver Pedido)
 const previewUsername = document.getElementById('preview-username');
 const previewList = document.getElementById('preview-list');
 const previewObsContainer = document.getElementById('preview-obs-container');
@@ -85,14 +84,13 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   });
 });
 
-// 2.5 VER PEDIDO (Abre a janela limpa com a lista)
+// 2.5 VER PEDIDO
 btnVerPedido.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio. Adicione material primeiro.");
     return;
   }
   
-  // Preencher os dados
   previewUsername.textContent = nomeColaborador;
   previewList.innerHTML = "";
   
@@ -102,7 +100,6 @@ btnVerPedido.addEventListener('click', () => {
     previewList.appendChild(li);
   });
   
-  // Tratar das observações
   const notasAdicionais = orderNotes.value.trim();
   if (notasAdicionais !== "") {
     previewObsText.textContent = notasAdicionais;
@@ -111,12 +108,10 @@ btnVerPedido.addEventListener('click', () => {
     previewObsContainer.classList.add('hidden');
   }
   
-  // Mostrar ecrã de pré-visualização (idêntico ao de submissão final)
   mainPortal.classList.add('hidden');
   previewOverlay.classList.remove('hidden');
 });
 
-// Voltar do ecrã de Ver Pedido para o Catálogo
 btnFecharPreview.addEventListener('click', () => {
   previewOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
@@ -194,11 +189,11 @@ btnSubmitOrder.addEventListener('click', () => {
   });
 });
 
-// 4. NOVA REQUISIÇÃO (Manda o desgraçado de volta para o ecrã inicial de Login)
+// 4. NOVA REQUISIÇÃO
 btnNewOrder.addEventListener('click', () => {
   carrinho = [];
   orderNotes.value = "";
-  usernameInput.value = ""; // Limpa a caixa de texto do login
+  usernameInput.value = "";
   nomeColaborador = "";
   
   summaryOverlay.classList.add('hidden');
@@ -214,14 +209,14 @@ btnVerHistorico.addEventListener('click', () => {
     historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
   } else {
     historicoSalvo.reverse().forEach(pedido => {
-      let itensHTML = pedido.itens.map(i => `<li>${i.nome} - <span style="color:var(--gold-primary)">x${i.quantidade}</span></li>`).join('');
+      let itensHTML = pedido.itens.map(i => `<li>${i.nome} - <span style="color:var(--primary-color); font-weight: bold;">x${i.quantidade}</span></li>`).join('');
       let obsHTML = pedido.observacoes ? `<p style="margin-top: 5px; font-size: 0.85rem; color: var(--text-muted);"><em>Obs: ${pedido.observacoes}</em></p>` : "";
       
       const div = document.createElement('div');
       div.className = 'historico-item';
       div.innerHTML = `
         <span class="historico-data">${pedido.data}</span>
-        <p><strong style="color:var(--gold-primary)">Colaborador:</strong> ${pedido.colaborador}</p>
+        <p><strong style="color:var(--primary-color)">Colaborador:</strong> ${pedido.colaborador}</p>
         <ul style="margin-top: 10px; list-style: inside; color: var(--text-muted); font-size: 0.9rem;">
           ${itensHTML}
         </ul>
