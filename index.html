@@ -11,12 +11,12 @@
   <!-- ECRÃ DE LOGIN -->
   <div id="login-overlay" class="login-overlay">
     <div class="login-card">
-      <h1 class="brand-title">UNIVERSAL MOTORS</h1>
+      <img src="fotos/logo.jpg" alt="Universal Motors" class="brand-logo">
       <hr class="divider">
       <p class="login-question">Quem está a solicitar o material?</p>
       <div class="login-form">
-        <input type="text" id="username-input" class="input-dark" placeholder="Digite o seu nome completo..." autocomplete="off">
-        <button id="btn-login" class="btn-gold">Continuar</button>
+        <input type="text" id="username-input" class="input-field" placeholder="Digite o seu nome completo..." autocomplete="off">
+        <button id="btn-login" class="btn-primary">Continuar</button>
       </div>
     </div>
   </div>
@@ -24,14 +24,14 @@
   <!-- PORTAL PRINCIPAL (Catálogo) -->
   <div id="main-portal" class="main-portal hidden">
     <header>
-      <h1 class="brand-title">REQUISIÇÃO DE MATERIAL</h1>
+      <img src="fotos/logo.jpg" alt="Universal Motors" class="brand-logo-small">
       <hr class="divider">
       <div class="header-actions">
         <div class="user-badge">
           <span>Colaborador: <strong id="display-username">--</strong></span>
           <button id="btn-logout" class="btn-link">Sair</button>
         </div>
-        <button id="btn-ver-historico" class="btn-outline-gold">Ver Histórico de Pedidos</button>
+        <button id="btn-ver-historico" class="btn-outline-primary">Ver Histórico de Pedidos</button>
       </div>
     </header>
 
@@ -42,8 +42,8 @@
           <span class="tag">Segurança / EPI</span>
           <h2 class="card-title">Luvas de Proteção</h2>
           <div class="card-actions">
-            <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
+            <input type="number" class="input-field quantity-input" value="1" min="1">
+            <button class="btn-outline-primary btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
@@ -54,8 +54,8 @@
           <span class="tag">Máquinas / Produção</span>
           <h2 class="card-title">Aparafusadora 18V</h2>
           <div class="card-actions">
-            <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
+            <input type="number" class="input-field quantity-input" value="1" min="1">
+            <button class="btn-outline-primary btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
@@ -66,49 +66,50 @@
           <span class="tag">Escritório / Apoio</span>
           <h2 class="card-title">Bloco A5 + Caneta</h2>
           <div class="card-actions">
-            <input type="number" class="input-dark quantity-input" value="1" min="1">
-            <button class="btn-outline-gold btn-add-item" style="width: 100%;">Adicionar</button>
+            <input type="number" class="input-field quantity-input" value="1" min="1">
+            <button class="btn-outline-primary btn-add-item" style="width: 100%;">Adicionar</button>
           </div>
         </div>
       </article>
     </main>
 
-    <!-- SECÇÃO ALINHADA: Observações e Botões -->
+    <!-- SECÇÃO: Observações -->
     <div class="observations-container" style="margin-top: 2rem; background-color: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
-      <label for="order-notes" class="brand-title" style="display: block; font-size: 1rem; margin-bottom: 1rem;">Informação adicional relativa ao pedido</label>
-      <textarea id="order-notes" class="input-dark" rows="4" style="width: 100%; resize: vertical; font-family: inherit;" placeholder="Escreva aqui observações sobre o pedido..."></textarea>
+      <label for="order-notes" class="section-title">Informação adicional relativa ao pedido</label>
+      <textarea id="order-notes" class="input-field" rows="4" style="width: 100%; resize: vertical; font-family: inherit;" placeholder="Escreva aqui observações sobre o pedido..."></textarea>
     </div>
 
-    <!-- BOTÕES AGORA ESTÃO AMBOS DOURADOS SÓLIDOS -->
+    <!-- BOTÕES DE AÇÃO -->
     <div class="submit-container">
-      <button id="btn-ver-pedido" class="btn-gold btn-large">Ver Pedido</button>
-      <button id="btn-submit-order" class="btn-gold btn-large">Submeter</button>
+      <button id="btn-ver-pedido" class="btn-primary btn-large">Ver Pedido</button>
+      <button id="btn-submit-order" class="btn-primary btn-large">Submeter</button>
     </div>
   </div>
 
   <!-- NOVO ECRÃ: PRÉ-VISUALIZAÇÃO DO PEDIDO -->
   <div id="preview-overlay" class="login-overlay hidden">
     <div class="login-card summary-card-layout">
-      <h1 class="brand-title">RESUMO DO CARRINHO</h1>
+      <img src="fotos/logo.jpg" alt="Universal Motors" class="brand-logo">
+      <h2 class="section-title" style="text-align: center; margin-bottom: 1rem;">RESUMO DO CARRINHO</h2>
       <hr class="divider">
       <div class="summary-details">
-        <p class="summary-info"><span class="label-gold">Colaborador:</span> <span id="preview-username"></span></p>
-        <p class="summary-info"><span class="label-gold">Materiais no Pedido:</span></p>
+        <p class="summary-info"><span class="label-primary">Colaborador:</span> <span id="preview-username"></span></p>
+        <p class="summary-info"><span class="label-primary">Materiais no Pedido:</span></p>
         
-        <div class="dark-box-list">
+        <div class="light-box-list">
           <ul id="preview-list" class="summary-list">
             <!-- JS injeta aqui -->
           </ul>
         </div>
 
         <div id="preview-obs-container" class="hidden" style="margin-top: 1rem;">
-          <p class="summary-info"><span class="label-gold">Observações:</span></p>
+          <p class="summary-info"><span class="label-primary">Observações:</span></p>
           <p id="preview-obs-text" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;"></p>
         </div>
       </div>
       
       <div class="summary-buttons" style="margin-top: 2rem;">
-        <button id="btn-fechar-preview" class="btn-outline-gold" style="width: 100%;">Voltar à Página Anterior</button>
+        <button id="btn-fechar-preview" class="btn-outline-primary" style="width: 100%;">Voltar à Página Anterior</button>
       </div>
     </div>
   </div>
@@ -116,13 +117,14 @@
   <!-- ECRÃ DE RESUMO FINAL -->
   <div id="summary-overlay" class="login-overlay hidden">
     <div class="login-card summary-card-layout">
-      <h1 class="brand-title">REQUISIÇÃO CONCLUÍDA</h1>
+      <img src="fotos/logo.jpg" alt="Universal Motors" class="brand-logo">
+      <h2 class="section-title" style="text-align: center; margin-bottom: 1rem;">REQUISIÇÃO CONCLUÍDA</h2>
       <hr class="divider">
       <div class="summary-details">
-        <p class="summary-info"><span class="label-gold">Colaborador:</span> <span id="final-username"></span></p>
-        <p class="summary-info"><span class="label-gold">Materiais Solicitados:</span></p>
+        <p class="summary-info"><span class="label-primary">Colaborador:</span> <span id="final-username"></span></p>
+        <p class="summary-info"><span class="label-primary">Materiais Solicitados:</span></p>
         
-        <div class="dark-box-list">
+        <div class="light-box-list">
           <ul id="summary-list" class="summary-list">
             <!-- JS injeta aqui -->
           </ul>
@@ -130,7 +132,7 @@
       </div>
       
       <div class="summary-buttons">
-        <button id="btn-new-order" class="btn-gold">Fazer Nova Requisição</button>
+        <button id="btn-new-order" class="btn-primary">Fazer Nova Requisição</button>
       </div>
     </div>
   </div>
@@ -138,14 +140,15 @@
   <!-- ECRÃ DE HISTÓRICO -->
   <div id="historico-overlay" class="login-overlay hidden">
     <div class="login-card" style="max-width: 800px; width: 90%;">
-      <h1 class="brand-title">HISTÓRICO DE REQUISIÇÕES</h1>
+      <img src="fotos/logo.jpg" alt="Universal Motors" class="brand-logo">
+      <h2 class="section-title" style="text-align: center; margin-bottom: 1rem;">HISTÓRICO DE REQUISIÇÕES</h2>
       <hr class="divider">
       
       <div id="historico-container" class="historico-container">
         <!-- JS injeta aqui -->
       </div>
 
-      <button id="btn-voltar-catalogo" class="btn-outline-gold" style="margin-top: 2rem;">Voltar ao Catálogo</button>
+      <button id="btn-voltar-catalogo" class="btn-outline-primary" style="margin-top: 2rem;">Voltar ao Catálogo</button>
     </div>
   </div>
 
