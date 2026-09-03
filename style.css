@@ -1,12 +1,13 @@
 :root {
-  --bg-color: #0f172a;
-  --card-bg: #1e293b;
-  --border-color: #334155;
-  --gold-primary: #eab308;
-  --gold-hover: #ca8a04;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --input-bg: #0b1121;
+  /* IDENTIDADE UNIVERSAL MOTORS */
+  --bg-color: #f3f4f6; /* Fundo cinza claro */
+  --card-bg: #ffffff; /* Cartões brancos */
+  --border-color: #e5e7eb; /* Bordas suaves */
+  --primary-color: #004b87; /* Azul corporativo Universal Motors */
+  --primary-hover: #00335e;
+  --text-main: #1f2937; /* Texto escuro */
+  --text-muted: #6b7280; /* Texto secundário */
+  --input-bg: #f9fafb;
 }
 
 * {
@@ -24,12 +25,37 @@ body {
 
 .hidden { display: none !important; }
 
-/* Ecrãs Sobrepostos (Login, Resumo, Histórico) */
+/* Logótipos */
+.brand-logo {
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto 1.5rem auto;
+  display: block;
+}
+
+.brand-logo-small {
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto 0.5rem auto;
+  display: block;
+}
+
+.section-title {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Ecrãs Sobrepostos */
 .login-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100vh;
-  background-color: var(--bg-color);
+  background-color: rgba(243, 244, 246, 0.95);
   display: flex;
   align-items: center; justify-content: center;
   padding: 1.5rem; z-index: 1000;
@@ -41,16 +67,9 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 2.5rem 2rem;
-  width: 100%; max-width: 440px;
+  width: 100%; max-width: 480px;
   text-align: center;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-}
-
-.brand-title {
-  color: var(--gold-primary);
-  font-size: 1.15rem; font-weight: 700;
-  letter-spacing: 0.05em; text-transform: uppercase;
-  margin-bottom: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .divider {
@@ -61,50 +80,54 @@ body {
 
 .login-form { display: flex; flex-direction: column; gap: 1rem; }
 
-.input-dark {
+.input-field {
   background-color: var(--input-bg);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   padding: 0.75rem 1rem; border-radius: 6px;
   font-size: 0.95rem; outline: none;
+  transition: border-color 0.2s;
 }
 
+.input-field:focus { border-color: var(--primary-color); }
+
 /* Botões */
-.btn-gold {
-  background-color: var(--gold-primary);
-  color: #000;
-  border: 1px solid var(--gold-primary);
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: 1px solid var(--primary-color);
   padding: 0.75rem 1.25rem; border-radius: 6px;
   font-weight: 600; cursor: pointer; transition: all 0.2s ease;
 }
 
-.btn-gold:hover {
-  background-color: var(--gold-hover);
-  border-color: var(--gold-hover);
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
-.btn-outline-gold {
+.btn-outline-primary {
   background-color: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
   padding: 0.75rem 1.25rem; border-radius: 6px;
-  font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+  font-weight: 600; cursor: pointer; transition: all 0.2s ease;
 }
 
-.btn-outline-gold:hover {
-  border-color: var(--gold-primary);
-  color: var(--gold-primary);
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
 }
 
 .btn-link {
-  background: none; border: none; color: var(--gold-primary); 
+  background: none; border: none; color: var(--primary-color); 
   cursor: pointer; text-decoration: underline; margin-left: 10px;
+  font-weight: 600;
 }
 
-/* PORTAL PRINCIPAL (Alinhamento rigoroso) */
+/* PORTAL PRINCIPAL */
 .main-portal { 
   padding: 2rem; 
-  max-width: 1000px; /* Isto alinha tudo na mesma "caixa" invisível */
+  max-width: 1000px; 
   margin: 0 auto; 
 }
 
@@ -112,6 +135,7 @@ header {
   background-color: var(--card-bg); padding: 1.5rem;
   border-radius: 12px; border: 1px solid var(--border-color);
   margin-bottom: 2rem; text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .header-actions {
@@ -122,23 +146,30 @@ header {
 .user-badge { color: var(--text-muted); font-size: 0.95rem; }
 .user-badge strong { color: var(--text-main); }
 
-/* GRELHA DO CATÁLOGO (3 por fila forçados) */
+/* GRELHA DO CATÁLOGO */
 .catalog-grid {
   display: grid; 
-  grid-template-columns: repeat(3, 1fr); /* Magia: exatamente 3 colunas iguais */
+  grid-template-columns: repeat(3, 1fr); 
   gap: 1.5rem;
 }
 
 .card {
   background: var(--card-bg); border: 1px solid var(--border-color);
   border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.card-image { width: 100%; height: 160px; background-color: #0f172a; }
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-image { width: 100%; height: 160px; background-color: #f3f4f6; }
 .card-image img { width: 100%; height: 100%; object-fit: cover; }
 .card-content { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
-.tag { font-size: 0.7rem; color: var(--gold-primary); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 600; }
-.card-title { font-size: 1.1rem; color: var(--text-main); margin-bottom: 1rem; }
+.tag { font-size: 0.7rem; color: var(--primary-color); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700; }
+.card-title { font-size: 1.1rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 600;}
 
 .card-actions {
   display: flex; gap: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: auto;
@@ -146,25 +177,20 @@ header {
 .quantity-input { width: 60px; text-align: center; font-weight: bold; }
 .item-added { background-color: #22c55e !important; border-color: #22c55e !important; color: white !important; }
 
-/* Botões de Fundo (50/50 Exatos) */
+/* Botões de Fundo */
 .btn-large { 
-  width: 100%; 
-  padding: 1rem; 
-  font-size: 1.1rem; 
-  margin-top: 0; 
+  width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 0; 
 }
 .submit-container { 
-  display: flex; 
-  gap: 1.5rem; /* O mesmo espaço que existe entre os cartões! */
-  margin-top: 1.5rem; 
+  display: flex; gap: 1.5rem; margin-top: 1.5rem; 
 }
 
-/* Ecrãs de Resumo (IDÊNTICO À TUA FOTO) */
+/* Ecrãs de Resumo */
 .summary-card-layout { max-width: 500px; text-align: left; }
 .summary-info { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-main); }
-.label-gold { color: var(--gold-primary); font-weight: 600; }
+.label-primary { color: var(--primary-color); font-weight: 700; }
 
-.dark-box-list {
+.light-box-list {
   background-color: var(--input-bg); border: 1px solid var(--border-color);
   border-radius: 8px; padding: 1rem; margin-top: 1rem; margin-bottom: 2rem;
 }
@@ -175,7 +201,7 @@ header {
   border-bottom: 1px solid var(--border-color); color: var(--text-main);
 }
 .summary-list li:last-child { border-bottom: none; padding-bottom: 0; }
-.summary-list li strong { color: var(--gold-primary); }
+.summary-list li strong { color: var(--primary-color); font-weight: 700;}
 .summary-buttons { display: flex; gap: 1rem; flex-direction: column; }
 
 /* Estilos do Histórico */
@@ -188,7 +214,7 @@ header {
 }
 .historico-data { font-size: 0.8rem; color: var(--text-muted); float: right; }
 
-/* REGRAS PARA O TELEMÓVEL (Para não estragar a vida a ninguém) */
+/* Responsividade */
 @media (max-width: 768px) {
   .catalog-grid { grid-template-columns: 1fr; }
   .submit-container { flex-direction: column; }
