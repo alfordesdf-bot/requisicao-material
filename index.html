@@ -35,6 +35,18 @@
       </div>
     </header>
 
+    <!-- NOVA SECÇÃO: Filtro de Categorias -->
+    <div class="filter-container">
+      <label for="category-filter" class="filter-label">Filtrar por Categoria:</label>
+      <select id="category-filter" class="input-field filter-select">
+        <option value="Todos">Todas as Categorias</option>
+        <option value="EPI">Segurança / EPI</option>
+        <option value="Ferramenta">Ferramentas / Produção</option>
+        <option value="Marketing">Marketing / Apoio</option>
+        <option value="Consumíveis">Consumíveis</option>
+      </select>
+    </div>
+
     <main class="catalog-grid">
 
       <!-- ==========================================
@@ -170,9 +182,14 @@
       <div id="historico-container" class="historico-container">
         <!-- JS injeta aqui -->
       </div>
-
       <button id="btn-voltar-catalogo" class="btn-outline-primary" style="margin-top: 2rem;">Voltar ao Catálogo</button>
     </div>
+  </div>
+
+  <!-- NOVO ECRÃ: MODAL DE IMAGEM AMPLIADA -->
+  <div id="image-modal" class="image-modal hidden">
+    <span id="close-image-modal" class="close-modal">&times;</span>
+    <img id="expanded-image" class="expanded-image" src="" alt="Imagem Expandida">
   </div>
 
   <script src="script.js"></script>
