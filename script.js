@@ -4,6 +4,7 @@ const mainPortal = document.getElementById('main-portal');
 const summaryOverlay = document.getElementById('summary-overlay');
 const previewOverlay = document.getElementById('preview-overlay'); 
 const historicoOverlay = document.getElementById('historico-overlay');
+const imageModal = document.getElementById('image-modal'); // NOVO: Modal da Imagem
 
 const usernameInput = document.getElementById('username-input');
 const btnLogin = document.getElementById('btn-login');
@@ -25,6 +26,12 @@ const btnVoltarCatalogo = document.getElementById('btn-voltar-catalogo');
 const summaryList = document.getElementById('summary-list');
 const historicoContainer = document.getElementById('historico-container');
 const orderNotes = document.getElementById('order-notes'); 
+
+// Elementos do Filtro e Modal de Imagem (NOVO)
+const categoryFilter = document.getElementById('category-filter');
+const allCards = document.querySelectorAll('.card');
+const expandedImage = document.getElementById('expanded-image');
+const closeImageModal = document.getElementById('close-image-modal');
 
 // O TEU LINK DO GOOGLE SHEETS JÁ AQUI CONFIGURADO
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxHM3FMD6_wzy7MWyC6YRCR8F20wX2WaAdvtvQcOcMgi3KjoYX7mYvEZmnzDyLEuO8-2A/exec";
@@ -56,7 +63,41 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   orderNotes.value = ""; 
 });
 
-// 2. ADICIONAR MATERIAL
+// 2. FILTRAR POR CATEGORIA (NOVO)
+categoryFilter.addEventListener('change', (e) => {
+  const selectedCategory = e.target.value.toLowerCase();
+
+  allCards.forEach(card => {
+    const cardTag = card.querySelector('.tag').innerText.toLowerCase();
+    
+    // Se selecionou "Todos" ou se a tag do cartão for igual à selecionada, mostra o cartão
+    if (selectedCategory === 'todos' || cardTag === selectedCategory) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none'; // Esconde os outros
+    }
+  });
+});
+
+// 3. AMPLIAR IMAGEM - LIGHTBOX (NOVO)
+document.querySelectorAll('.card-image img').forEach(img => {
+  img.addEventListener('click', () => {
+    expandedImage.src = img.src; // Copia a foto clicada para o ecrã grande
+    imageModal.classList.remove('hidden');
+  });
+});
+
+// Fechar a imagem ampliada
+closeImageModal.addEventListener('click', () => {
+  imageModal.classList.add('hidden');
+});
+imageModal.addEventListener('click', (e) => {
+  if (e.target === imageModal) { // Fecha se clicar no fundo preto
+    imageModal.classList.add('hidden');
+  }
+});
+
+// 4. ADICIONAR MATERIAL AO CARRINHO
 document.querySelectorAll('.btn-add-item').forEach(btn => {
   btn.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
@@ -84,7 +125,7 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   });
 });
 
-// 2.5 VER PEDIDO
+// 5. VER PEDIDO (Pré-visualização)
 btnVerPedido.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio. Adicione material primeiro.");
@@ -117,7 +158,7 @@ btnFecharPreview.addEventListener('click', () => {
   mainPortal.classList.remove('hidden');
 });
 
-// 3. SUBMETER REQUISIÇÃO
+// 6. SUBMETER REQUISIÇÃO
 btnSubmitOrder.addEventListener('click', () => {
   if (carrinho.length === 0) {
     alert("O carrinho está vazio.");
@@ -189,18 +230,22 @@ btnSubmitOrder.addEventListener('click', () => {
   });
 });
 
-// 4. NOVA REQUISIÇÃO
+// 7. NOVA REQUISIÇÃO
 btnNewOrder.addEventListener('click', () => {
   carrinho = [];
   orderNotes.value = "";
   usernameInput.value = "";
   nomeColaborador = "";
+  categoryFilter.value = "Todos"; // Reseta o filtro para a nova pessoa
   
+  // Mostrar todos os cartões novamente
+  allCards.forEach(card => card.style.display = 'flex');
+
   summaryOverlay.classList.add('hidden');
   loginOverlay.classList.remove('hidden');
 });
 
-// 5. VER HISTÓRICO
+// 8. VER HISTÓRICO
 btnVerHistorico.addEventListener('click', () => {
   const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
   historicoContainer.innerHTML = ""; 
