@@ -1,4 +1,3 @@
-// ELEMENTOS DO DOM
 const loginOverlay = document.getElementById('login-overlay');
 const mainPortal = document.getElementById('main-portal');
 const summaryOverlay = document.getElementById('summary-overlay');
@@ -43,8 +42,9 @@ const GOOGLE_SHEETS_EPI_URL = "https://script.google.com/macros/s/AKfycbzcGUVImy
 let carrinho = [];
 let nomeColaborador = "";
 let isGestorAtual = false;
+let isComercialAtual = false;
 
-// LISTA OFICIAL DE COLABORADORES DA UNIVERSAL MOTORS (Validação de Acesso)
+// LISTA OFICIAL DE COLABORADORES DA UNIVERSAL MOTORS (Com Helder Casanova)
 const COLABORADORES_UM = [
   "alfordes manuel",
   "andre faria",
@@ -62,11 +62,13 @@ const COLABORADORES_UM = [
   "eduardo pereira",
   "eduardo pinhal",
   "fatima gomes",
+  "helder casanova",
   "fernando azevedo",
   "fernando mineiro",
   "guilherme ferreira",
   "ines casanova",
   "joao paulo",
+  "jose barroso",
   "kyrylo savchenko",
   "luciano silva",
   "luis guimaraes",
@@ -87,6 +89,15 @@ const COLABORADORES_UM = [
   "tiago freitas"
 ];
 
+// COMERCIAIS (Acesso a EPI + Marketing)
+const COMERCIAIS_UM = [
+  "andre oliveira",
+  "ruben torres",
+  "tiago freitas",
+  "jose barroso",
+  "nuno alves"
+];
+
 function mostrarAlerta(mensagem) {
   customAlertMessage.textContent = mensagem;
   customAlertOverlay.classList.remove('hidden');
@@ -105,7 +116,42 @@ function verificarSeGestor(nome) {
   return listaGestores.includes(removerAcentos(nome));
 }
 
-// FUNÇÃO DE LOGIN COM VALIDAÇÃO DE COLABORADOR OFICIAL
+function verificarSeComercial(nome) {
+  return COMERCIAIS_UM.includes(removerAcentos(nome));
+}
+
+function aplicarFiltrosVisualizacao() {
+  Array.from(categoryFilter.options).forEach(opt => {
+    const val = opt.value.toLowerCase();
+    if (val === 'todos') {
+      opt.style.display = 'block';
+      opt.disabled = false;
+      return;
+    }
+    if (isGestorAtual) {
+      opt.style.display = 'block';
+      opt.disabled = false;
+    } else if (isComercialAtual) {
+      opt.style.display = (val === 'epi' || val === 'marketing') ? 'block' : 'none';
+      opt.disabled = !(val === 'epi' || val === 'marketing');
+    } else {
+      opt.style.display = (val === 'epi') ? 'block' : 'none';
+      opt.disabled = !(val === 'epi');
+    }
+  });
+
+  allCards.forEach(card => {
+    const cardTag = card.querySelector('.tag').innerText.toLowerCase();
+    if (isGestorAtual) {
+      card.style.display = 'flex';
+    } else if (isComercialAtual) {
+      card.style.display = (cardTag === 'epi' || cardTag === 'marketing') ? 'flex' : 'none';
+    } else {
+      card.style.display = (cardTag === 'epi') ? 'flex' : 'none';
+    }
+  });
+}
+
 function entrar() {
   const nomeDigitadoBruto = usernameInput.value.trim();
   
@@ -120,8 +166,6 @@ function entrar() {
   }
 
   const nomeLimpo = removerAcentos(nomeDigitadoBruto);
-
-  // VALIDAR SE O NOME EXISTE NA LISTA DA UNIVERSAL MOTORS
   const colaboradorExiste = COLABORADORES_UM.includes(nomeLimpo);
 
   if (!colaboradorExiste) {
@@ -131,25 +175,9 @@ function entrar() {
 
   nomeColaborador = nomeDigitadoBruto;
   isGestorAtual = verificarSeGestor(nomeColaborador);
+  isComercialAtual = verificarSeComercial(nomeColaborador);
 
-  Array.from(categoryFilter.options).forEach(opt => {
-    const val = opt.value.toLowerCase();
-    if (['ferramenta', 'marketing', 'consumíveis'].includes(val)) {
-      opt.style.display = isGestorAtual ? 'block' : 'none';
-      opt.disabled = !isGestorAtual; 
-    }
-  });
-
-  allCards.forEach(card => {
-    const cardTag = card.querySelector('.tag').innerText.toLowerCase();
-    const isRestricted = ['ferramenta', 'marketing', 'consumíveis'].includes(cardTag);
-
-    if (isRestricted && !isGestorAtual) {
-      card.style.display = 'none';
-    } else {
-      card.style.display = 'flex';
-    }
-  });
+  aplicarFiltrosVisualizacao();
 
   categoryFilter.value = "Todos"; 
   displayUsername.textContent = nomeColaborador;
@@ -168,18 +196,23 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   orderNotes.value = ""; 
   categoryFilter.value = "Todos";
   isGestorAtual = false;
+  isComercialAtual = false;
 });
 
 categoryFilter.addEventListener('change', (e) => {
   const selectedCategory = e.target.value.toLowerCase();
-
   allCards.forEach(card => {
     const cardTag = card.querySelector('.tag').innerText.toLowerCase();
-    const isRestricted = ['ferramenta', 'marketing', 'consumíveis'].includes(cardTag);
-    
-    if (isRestricted && !isGestorAtual) {
+    const isRestrictedGestor = ['ferramenta', 'marketing', 'consumíveis'].includes(cardTag);
+    const isRestrictedComercial = ['ferramenta', 'consumíveis'].includes(cardTag);
+
+    if (!isGestorAtual && isRestrictedGestor) {
       card.style.display = 'none';
-      return; 
+      return;
+    }
+    if (isComercialAtual && isRestrictedComercial && cardTag !== 'marketing') {
+      card.style.display = 'none';
+      return;
     }
 
     if (selectedCategory === 'todos' || cardTag === selectedCategory) {
@@ -382,8 +415,9 @@ btnNewOrder.addEventListener('click', () => {
   nomeColaborador = "";
   categoryFilter.value = "Todos";
   isGestorAtual = false;
+  isComercialAtual = false;
   
-  allCards.forEach(card => card.style.display = 'flex');
+  aplicarFiltrosVisualizacao();
 
   summaryOverlay.classList.add('hidden');
   loginOverlay.classList.remove('hidden');
