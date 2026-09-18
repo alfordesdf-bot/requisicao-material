@@ -62,6 +62,7 @@ const COLABORADORES_UM = [
   "eduardo pereira",
   "eduardo pinhal",
   "fatima gomes",
+  "gabriel oliveira",
   "helder casanova",
   "fernando azevedo",
   "fernando mineiro",
