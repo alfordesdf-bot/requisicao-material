@@ -120,7 +120,16 @@ function verificarSeComercial(nome) {
   return COMERCIAIS_UM.includes(removerAcentos(nome));
 }
 
+// Função unificada para decidir se um cartão deve aparecer com base na categoria e permissões
+function cardPermitidoParaUtilizador(cardTag) {
+  if (isGestorAtual) return true;
+  if (isComercialAtual) return (cardTag === 'epi' || cardTag === 'marketing');
+  return (cardTag === 'epi');
+}
+
 function aplicarFiltrosVisualizacao() {
+  const selectedCategory = categoryFilter.value.toLowerCase();
+
   Array.from(categoryFilter.options).forEach(opt => {
     const val = opt.value.toLowerCase();
     if (val === 'todos') {
@@ -142,12 +151,17 @@ function aplicarFiltrosVisualizacao() {
 
   allCards.forEach(card => {
     const cardTag = card.querySelector('.tag').innerText.toLowerCase();
-    if (isGestorAtual) {
+    const permitidoPorPerfil = cardPermitidoParaUtilizador(cardTag);
+
+    if (!permitidoPorPerfil) {
+      card.style.display = 'none';
+      return;
+    }
+
+    if (selectedCategory === 'todos' || cardTag === selectedCategory) {
       card.style.display = 'flex';
-    } else if (isComercialAtual) {
-      card.style.display = (cardTag === 'epi' || cardTag === 'marketing') ? 'flex' : 'none';
     } else {
-      card.style.display = (cardTag === 'epi') ? 'flex' : 'none';
+      card.style.display = 'none';
     }
   });
 }
@@ -177,9 +191,9 @@ function entrar() {
   isGestorAtual = verificarSeGestor(nomeColaborador);
   isComercialAtual = verificarSeComercial(nomeColaborador);
 
+  categoryFilter.value = "Todos"; 
   aplicarFiltrosVisualizacao();
 
-  categoryFilter.value = "Todos"; 
   displayUsername.textContent = nomeColaborador;
   loginOverlay.classList.add('hidden');
   mainPortal.classList.remove('hidden');
@@ -199,28 +213,8 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   isComercialAtual = false;
 });
 
-categoryFilter.addEventListener('change', (e) => {
-  const selectedCategory = e.target.value.toLowerCase();
-  allCards.forEach(card => {
-    const cardTag = card.querySelector('.tag').innerText.toLowerCase();
-    const isRestrictedGestor = ['ferramenta', 'marketing', 'consumíveis'].includes(cardTag);
-    const isRestrictedComercial = ['ferramenta', 'consumíveis'].includes(cardTag);
-
-    if (!isGestorAtual && isRestrictedGestor) {
-      card.style.display = 'none';
-      return;
-    }
-    if (isComercialAtual && isRestrictedComercial && cardTag !== 'marketing') {
-      card.style.display = 'none';
-      return;
-    }
-
-    if (selectedCategory === 'todos' || cardTag === selectedCategory) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
-    }
-  });
+categoryFilter.addEventListener('change', () => {
+  aplicarFiltrosVisualizacao();
 });
 
 document.querySelectorAll('.card-image img').forEach(img => {
