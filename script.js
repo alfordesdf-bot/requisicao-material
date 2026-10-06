@@ -44,9 +44,10 @@ let nomeColaborador = "";
 let isGestorAtual = false;
 let isComercialAtual = false;
 
-// LISTA OFICIAL DE COLABORADORES DA UNIVERSAL MOTORS (Com Helder Casanova)
+// LISTA OFICIAL DE COLABORADORES DA UNIVERSAL MOTORS
 const COLABORADORES_UM = [
   "alfordes manuel",
+  "alfordes joao",
   "andre faria",
   "andre marafona",
   "andre oliveira",
@@ -109,11 +110,12 @@ btnCloseAlert.addEventListener('click', () => {
 });
 
 function removerAcentos(texto) {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  if (!texto) return "";
+  return String(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
 function verificarSeGestor(nome) {
-  const listaGestores = ["bruno sa", "eduardo pereira", "luis novo", "alfordes manuel", "ines casanova"];
+  const listaGestores = ["bruno sa", "eduardo pereira", "luis novo", "alfordes manuel", "alfordes manuel da costa joao", "alfordes joao", "ines casanova"];
   return listaGestores.includes(removerAcentos(nome));
 }
 
@@ -121,7 +123,6 @@ function verificarSeComercial(nome) {
   return COMERCIAIS_UM.includes(removerAcentos(nome));
 }
 
-// Função unificada para decidir se um cartão deve aparecer com base na categoria e permissões
 function cardPermitidoParaUtilizador(cardTag) {
   if (isGestorAtual) return true;
   if (isComercialAtual) return (cardTag === 'epi' || cardTag === 'marketing');
@@ -129,29 +130,33 @@ function cardPermitidoParaUtilizador(cardTag) {
 }
 
 function aplicarFiltrosVisualizacao() {
-  const selectedCategory = categoryFilter.value.toLowerCase();
+  const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : 'todos';
 
-  Array.from(categoryFilter.options).forEach(opt => {
-    const val = opt.value.toLowerCase();
-    if (val === 'todos') {
-      opt.style.display = 'block';
-      opt.disabled = false;
-      return;
-    }
-    if (isGestorAtual) {
-      opt.style.display = 'block';
-      opt.disabled = false;
-    } else if (isComercialAtual) {
-      opt.style.display = (val === 'epi' || val === 'marketing') ? 'block' : 'none';
-      opt.disabled = !(val === 'epi' || val === 'marketing');
-    } else {
-      opt.style.display = (val === 'epi') ? 'block' : 'none';
-      opt.disabled = !(val === 'epi');
-    }
-  });
+  if (categoryFilter) {
+    Array.from(categoryFilter.options).forEach(opt => {
+      const val = opt.value.toLowerCase();
+      if (val === 'todos') {
+        opt.style.display = 'block';
+        opt.disabled = false;
+        return;
+      }
+      if (isGestorAtual) {
+        opt.style.display = 'block';
+        opt.disabled = false;
+      } else if (isComercialAtual) {
+        opt.style.display = (val === 'epi' || val === 'marketing') ? 'block' : 'none';
+        opt.disabled = !(val === 'epi' || val === 'marketing');
+      } else {
+        opt.style.display = (val === 'epi') ? 'block' : 'none';
+        opt.disabled = !(val === 'epi');
+      }
+    });
+  }
 
   allCards.forEach(card => {
-    const cardTag = card.querySelector('.tag').innerText.toLowerCase();
+    const tagEl = card.querySelector('.tag');
+    if (!tagEl) return;
+    const cardTag = tagEl.innerText.toLowerCase();
     const permitidoPorPerfil = cardPermitidoParaUtilizador(cardTag);
 
     if (!permitidoPorPerfil) {
@@ -192,7 +197,7 @@ function entrar() {
   isGestorAtual = verificarSeGestor(nomeColaborador);
   isComercialAtual = verificarSeComercial(nomeColaborador);
 
-  categoryFilter.value = "Todos"; 
+  if (categoryFilter) categoryFilter.value = "Todos"; 
   aplicarFiltrosVisualizacao();
 
   displayUsername.textContent = nomeColaborador;
@@ -203,36 +208,48 @@ function entrar() {
 btnLogin.addEventListener('click', entrar);
 usernameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') entrar(); });
 
-document.getElementById('btn-logout').addEventListener('click', () => {
-  mainPortal.classList.add('hidden');
-  loginOverlay.classList.remove('hidden');
-  usernameInput.value = "";
-  carrinho = [];
-  orderNotes.value = ""; 
-  categoryFilter.value = "Todos";
-  isGestorAtual = false;
-  isComercialAtual = false;
-});
+const btnLogout = document.getElementById('btn-logout');
+if (btnLogout) {
+  btnLogout.addEventListener('click', () => {
+    mainPortal.classList.add('hidden');
+    loginOverlay.classList.remove('hidden');
+    usernameInput.value = "";
+    carrinho = [];
+    if (orderNotes) orderNotes.value = ""; 
+    if (categoryFilter) categoryFilter.value = "Todos";
+    isGestorAtual = false;
+    isComercialAtual = false;
+  });
+}
 
-categoryFilter.addEventListener('change', () => {
-  aplicarFiltrosVisualizacao();
-});
+if (categoryFilter) {
+  categoryFilter.addEventListener('change', () => {
+    aplicarFiltrosVisualizacao();
+  });
+}
 
 document.querySelectorAll('.card-image img').forEach(img => {
   img.addEventListener('click', () => {
-    expandedImage.src = img.src; 
-    imageModal.classList.remove('hidden');
+    if (expandedImage && imageModal) {
+      expandedImage.src = img.src; 
+      imageModal.classList.remove('hidden');
+    }
   });
 });
 
-closeImageModal.addEventListener('click', () => {
-  imageModal.classList.add('hidden');
-});
-imageModal.addEventListener('click', (e) => {
-  if (e.target === imageModal) { 
+if (closeImageModal) {
+  closeImageModal.addEventListener('click', () => {
     imageModal.classList.add('hidden');
-  }
-});
+  });
+}
+
+if (imageModal) {
+  imageModal.addEventListener('click', (e) => {
+    if (e.target === imageModal) { 
+      imageModal.classList.add('hidden');
+    }
+  });
+}
 
 document.querySelectorAll('.btn-add-item').forEach(btn => {
   btn.addEventListener('click', (e) => {
@@ -278,6 +295,7 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
 });
 
 function atualizarListaPreview() {
+  if (!previewList) return;
   previewList.innerHTML = "";
   if (carrinho.length === 0) {
     previewList.innerHTML = "<li><span style='color: var(--text-muted);'>O carrinho está vazio.</span></li>";
@@ -304,150 +322,163 @@ function atualizarListaPreview() {
   });
 }
 
-btnVerPedido.addEventListener('click', () => {
-  if (carrinho.length === 0) {
-    mostrarAlerta("O carrinho está vazio. Adicione material primeiro.");
-    return;
-  }
-  previewUsername.textContent = nomeColaborador;
-  atualizarListaPreview(); 
-  
-  const notasAdicionais = orderNotes.value.trim();
-  if (notasAdicionais !== "") {
-    previewObsText.textContent = notasAdicionais;
-    previewObsContainer.classList.remove('hidden');
-  } else {
-    previewObsContainer.classList.add('hidden');
-  }
-  
-  mainPortal.classList.add('hidden');
-  previewOverlay.classList.remove('hidden');
-});
-
-btnFecharPreview.addEventListener('click', () => {
-  previewOverlay.classList.add('hidden');
-  mainPortal.classList.remove('hidden');
-});
-
-btnSubmitOrder.addEventListener('click', () => {
-  if (carrinho.length === 0) {
-    mostrarAlerta("O carrinho está vazio. Adicione material primeiro.");
-    return;
-  }
-
-  btnSubmitOrder.innerText = "A guardar...";
-  btnSubmitOrder.disabled = true;
-
-  finalUsername.textContent = nomeColaborador;
-  summaryList.innerHTML = "";
-  
-  carrinho.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${item.nome}</span> <strong>x${item.quantidade}</strong>`;
-    summaryList.appendChild(li);
-  });
-
-  const notasAdicionais = orderNotes.value.trim();
-  if (notasAdicionais !== "") {
-    const liObs = document.createElement('li');
-    liObs.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">Obs: ${notasAdicionais}</span>`;
-    summaryList.appendChild(liObs);
-  }
-
-  const pedidoID = Date.now();
-  const dataAtual = new Date().toLocaleString('pt-PT');
-
-  const pedido = {
-    id: pedidoID,
-    colaborador: nomeColaborador,
-    data: dataAtual,
-    itens: [...carrinho],
-    observacoes: notasAdicionais
-  };
-  
-  const historicoAntigo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
-  historicoAntigo.push(pedido);
-  localStorage.setItem('historicoRequisicoes', JSON.stringify(historicoAntigo));
-
-  const dadosSheet = {
-    id: pedidoID,
-    data: dataAtual,
-    colaborador: nomeColaborador,
-    itens: carrinho, 
-    observacoes: notasAdicionais
-  };
-
-  fetch(GOOGLE_SHEETS_HISTORICO_URL, {
-    method: "POST",
-    mode: "no-cors", 
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(dadosSheet)
-  }).catch(err => console.log("Erro no envio para o histórico geral:", err));
-
-  fetch(GOOGLE_SHEETS_EPI_URL, {
-    method: "POST",
-    mode: "no-cors", 
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(dadosSheet)
-  })
-  .then(() => {
+if (btnVerPedido) {
+  btnVerPedido.addEventListener('click', () => {
+    if (carrinho.length === 0) {
+      mostrarAlerta("O carrinho está vazio. Adicione material primeiro.");
+      return;
+    }
+    if (previewUsername) previewUsername.textContent = nomeColaborador;
+    atualizarListaPreview(); 
+    
+    const notasAdicionais = orderNotes ? orderNotes.value.trim() : "";
+    if (notasAdicionais !== "") {
+      if (previewObsText) previewObsText.textContent = notasAdicionais;
+      if (previewObsContainer) previewObsContainer.classList.remove('hidden');
+    } else {
+      if (previewObsContainer) previewObsContainer.classList.add('hidden');
+    }
+    
     mainPortal.classList.add('hidden');
-    summaryOverlay.classList.remove('hidden');
-    btnSubmitOrder.innerText = "Submeter";
-    btnSubmitOrder.disabled = false;
-  })
-  .catch(error => {
-    mostrarAlerta("Erro de ligação ao ficheiro de EPIs. O pedido ficou salvo no histórico local.");
-    btnSubmitOrder.innerText = "Submeter";
-    btnSubmitOrder.disabled = false;
+    if (previewOverlay) previewOverlay.classList.remove('hidden');
   });
-});
+}
 
-btnNewOrder.addEventListener('click', () => {
-  carrinho = [];
-  orderNotes.value = "";
-  usernameInput.value = "";
-  nomeColaborador = "";
-  categoryFilter.value = "Todos";
-  isGestorAtual = false;
-  isComercialAtual = false;
-  
-  aplicarFiltrosVisualizacao();
+if (btnFecharPreview) {
+  btnFecharPreview.addEventListener('click', () => {
+    if (previewOverlay) previewOverlay.classList.add('hidden');
+    mainPortal.classList.remove('hidden');
+  });
+}
 
-  summaryOverlay.classList.add('hidden');
-  loginOverlay.classList.remove('hidden');
-});
+if (btnSubmitOrder) {
+  btnSubmitOrder.addEventListener('click', () => {
+    if (carrinho.length === 0) {
+      mostrarAlerta("O carrinho está vazio. Adicione material primeiro.");
+      return;
+    }
 
-btnVerHistorico.addEventListener('click', () => {
-  const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
-  historicoContainer.innerHTML = ""; 
+    btnSubmitOrder.innerText = "A guardar...";
+    btnSubmitOrder.disabled = true;
 
-  if (historicoSalvo.length === 0) {
-    historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
-  } else {
-    historicoSalvo.reverse().forEach(pedido => {
-      let itensHTML = pedido.itens.map(i => `<li>${i.nome} - <span style="color:var(--primary-color); font-weight: bold;">x${i.quantidade}</span></li>`).join('');
-      let obsHTML = pedido.observacoes ? `<p style="margin-top: 5px; font-size: 0.85rem; color: var(--text-muted);"><em>Obs: ${pedido.observacoes}</em></p>` : "";
-      
-      const div = document.createElement('div');
-      div.className = 'historico-item';
-      div.innerHTML = `
-        <span class="historico-data">${pedido.data}</span>
-        <p><strong style="color:var(--primary-color)">Colaborador:</strong> ${pedido.colaborador}</p>
-        <ul style="margin-top: 10px; list-style: inside; color: var(--text-muted); font-size: 0.9rem;">
-          ${itensHTML}
-        </ul>
-        ${obsHTML}
-      `;
-      historicoContainer.appendChild(div);
+    if (finalUsername) finalUsername.textContent = nomeColaborador;
+    if (summaryList) summaryList.innerHTML = "";
+    
+    carrinho.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item.nome}</span> <strong>x${item.quantidade}</strong>`;
+      if (summaryList) summaryList.appendChild(li);
     });
-  }
 
-  mainPortal.classList.add('hidden');
-  historicoOverlay.classList.remove('hidden');
-});
+    const notasAdicionais = orderNotes ? orderNotes.value.trim() : "";
+    if (notasAdicionais !== "" && summaryList) {
+      const liObs = document.createElement('li');
+      liObs.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">Obs: ${notasAdicionais}</span>`;
+      summaryList.appendChild(liObs);
+    }
 
-btnVoltarCatalogo.addEventListener('click', () => {
-  historicoOverlay.classList.add('hidden');
-  mainPortal.classList.remove('hidden');
-});
+    const pedidoID = Date.now();
+    const dataAtual = new Date().toLocaleString('pt-PT');
+
+    const pedido = {
+      id: pedidoID,
+      colaborador: nomeColaborador,
+      data: dataAtual,
+      itens: [...carrinho],
+      observacoes: notasAdicionais
+    };
+    
+    const historicoAntigo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
+    historicoAntigo.push(pedido);
+    localStorage.setItem('historicoRequisicoes', JSON.stringify(historicoAntigo));
+
+    const dadosSheet = {
+      id: pedidoID,
+      data: dataAtual,
+      colaborador: nomeColaborador,
+      itens: carrinho, 
+      observacoes: notasAdicionais
+    };
+
+    fetch(GOOGLE_SHEETS_HISTORICO_URL, {
+      method: "POST",
+      mode: "no-cors", 
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(dadosSheet)
+    }).catch(err => console.log("Erro no envio para o histórico geral:", err));
+
+    fetch(GOOGLE_SHEETS_EPI_URL, {
+      method: "POST",
+      mode: "no-cors", 
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(dadosSheet)
+    })
+    .then(() => {
+      mainPortal.classList.add('hidden');
+      if (summaryOverlay) summaryOverlay.classList.remove('hidden');
+      btnSubmitOrder.innerText = "Submeter";
+      btnSubmitOrder.disabled = false;
+    })
+    .catch(error => {
+      mostrarAlerta("Erro de ligação ao ficheiro de EPIs. O pedido ficou salvo no histórico local.");
+      btnSubmitOrder.innerText = "Submeter";
+      btnSubmitOrder.disabled = false;
+    });
+  });
+}
+
+if (btnNewOrder) {
+  btnNewOrder.addEventListener('click', () => {
+    carrinho = [];
+    if (orderNotes) orderNotes.value = "";
+    if (usernameInput) usernameInput.value = "";
+    nomeColaborador = "";
+    if (categoryFilter) categoryFilter.value = "Todos";
+    isGestorAtual = false;
+    isComercialAtual = false;
+    
+    aplicarFiltrosVisualizacao();
+
+    if (summaryOverlay) summaryOverlay.classList.add('hidden');
+    loginOverlay.classList.remove('hidden');
+  });
+}
+
+if (btnVerHistorico) {
+  btnVerHistorico.addEventListener('click', () => {
+    const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
+    if (historicoContainer) historicoContainer.innerHTML = ""; 
+
+    if (historicoSalvo.length === 0) {
+      if (historicoContainer) historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
+    } else {
+      historicoSalvo.reverse().forEach(pedido => {
+        let itensHTML = pedido.itens.map(i => `<li>${i.nome} - <span style="color:var(--primary-color); font-weight: bold;">x${i.quantidade}</span></li>`).join('');
+        let obsHTML = pedido.observacoes ? `<p style="margin-top: 5px; font-size: 0.85rem; color: var(--text-muted);"><em>Obs: ${pedido.observacoes}</em></p>` : "";
+        
+        const div = document.createElement('div');
+        div.className = 'historico-item';
+        div.innerHTML = `
+          <span class="historico-data">${pedido.data}</span>
+          <p><strong style="color:var(--primary-color)">Colaborador:</strong> ${pedido.colaborador}</p>
+          <ul style="margin-top: 10px; list-style: inside; color: var(--text-muted); font-size: 0.9rem;">
+            ${itensHTML}
+          </ul>
+          ${obsHTML}
+        `;
+        if (historicoContainer) historicoContainer.appendChild(div);
+      });
+    }
+
+    mainPortal.classList.add('hidden');
+    if (historicoOverlay) historicoOverlay.classList.remove('hidden');
+  });
+}
+
+if (btnVoltarCatalogo) {
+  btnVoltarCatalogo.addEventListener('click', () => {
+    if (historicoOverlay) historicoOverlay.classList.add('hidden');
+    mainPortal.classList.add('hidden'); // safety
+    mainPortal.classList.remove('hidden');
+  });
+}
