@@ -35,7 +35,7 @@ const allCards = document.querySelectorAll('.card');
 const expandedImage = document.getElementById('expanded-image');
 const closeImageModal = document.getElementById('close-image-modal');
 
-// URLS DOS GOOGLE SHEETS
+// URLS DOS GOOGLE SHEETS (Podes usar o mesmo Apps Script central ou separados)
 const GOOGLE_SHEETS_HISTORICO_URL = "https://script.google.com/macros/s/AKfycbwrbwbbyZFX2odbXzit3LH8xbTfYD6KEaDNMAqPJFA1BVlKdKoeB2s-_FeL0h6eAKfu/exec";
 const GOOGLE_SHEETS_EPI_URL = "https://script.google.com/macros/s/AKfycbzcGUVImy1_SFqqYYi65MUYL3Zk6KTsUMu6i4I8_UNFO0XCz0CIWkfu9OLWuJbTUmfuIQ/exec";
 
@@ -129,7 +129,6 @@ function verificarSeComercial(nome) {
 function cardPermitidoParaUtilizador(cardTag) {
   if (isGestorAtual) return true;
   if (isComercialAtual) return (cardTag === 'epi' || cardTag === 'marketing');
-  // Se for colaborador normal, permitimos EPI e as novas categorias de consumíveis caso aplicável
   return (cardTag === 'epi' || cardTag.includes('consumíveis'));
 }
 
@@ -267,7 +266,7 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
   btn.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
     const tituloBase = card.querySelector('.card-title').innerText;
-    const categoriaMaterial = card.querySelector('.tag').innerText; 
+    const categoriaMaterial = card.querySelector('.tag').innerText.trim(); 
     const inputQuantidade = card.querySelector('.quantity-input');
     const quantidade = parseInt(inputQuantidade.value);
 
@@ -316,7 +315,7 @@ function atualizarListaPreview() {
   carrinho.forEach((item, index) => {
     const li = document.createElement('li');
     li.innerHTML = `
-      <span>${item.nome} <small style="color: var(--text-muted);">[${item.categoria}]</small></span> 
+      <span>${item.nome} <small style="color: var(--primary-color); font-weight: 600;">[${item.categoria}]</small></span> 
       <div style="display: flex; align-items: center; gap: 15px;">
         <strong>x${item.quantidade}</strong>
         <button class="btn-remove-item" data-index="${index}" title="Remover Artigo">✕</button>
@@ -378,7 +377,7 @@ if (btnSubmitOrder) {
     
     carrinho.forEach(item => {
       const li = document.createElement('li');
-      li.innerHTML = `<span>${item.nome} <small style="color: var(--text-muted);">[${item.categoria}]</small></span> <strong>x${item.quantidade}</strong>`;
+      li.innerHTML = `<span>${item.nome} <small style="color: var(--primary-color);">[${item.categoria}]</small></span> <strong>x${item.quantidade}</strong>`;
       if (summaryList) summaryList.appendChild(li);
     });
 
@@ -402,94 +401,4 @@ if (btnSubmitOrder) {
     
     const historicoAntigo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
     historicoAntigo.push(pedido);
-    localStorage.setItem('historicoRequisicoes', JSON.stringify(historicoAntigo));
-
-    const dadosSheet = {
-      id: pedidoID,
-      data: dataAtual,
-      colaborador: nomeColaborador,
-      itens: carrinho, 
-      observacoes: notasAdicionais
-    };
-
-    fetch(GOOGLE_SHEETS_HISTORICO_URL, {
-      method: "POST",
-      mode: "no-cors", 
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(dadosSheet)
-    }).catch(err => console.log("Erro no envio para o histórico geral:", err));
-
-    fetch(GOOGLE_SHEETS_EPI_URL, {
-      method: "POST",
-      mode: "no-cors", 
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(dadosSheet)
-    })
-    .then(() => {
-      if (mainPortal) mainPortal.classList.add('hidden');
-      if (summaryOverlay) summaryOverlay.classList.remove('hidden');
-      btnSubmitOrder.innerText = "Submeter";
-      btnSubmitOrder.disabled = false;
-    })
-    .catch(error => {
-      mostrarAlerta("Erro de ligação ao ficheiro de pedidos. O pedido ficou salvo no histórico local.");
-      btnSubmitOrder.innerText = "Submeter";
-      btnSubmitOrder.disabled = false;
-    });
-  });
-}
-
-if (btnNewOrder) {
-  btnNewOrder.addEventListener('click', () => {
-    carrinho = [];
-    if (orderNotes) orderNotes.value = "";
-    if (usernameInput) usernameInput.value = "";
-    nomeColaborador = "";
-    if (categoryFilter) categoryFilter.value = "Todos";
-    isGestorAtual = false;
-    isComercialAtual = false;
-    
-    aplicarFiltrosVisualizacao();
-
-    if (summaryOverlay) summaryOverlay.classList.add('hidden');
-    if (loginOverlay) loginOverlay.classList.remove('hidden');
-  });
-}
-
-if (btnVerHistorico) {
-  btnVerHistorico.addEventListener('click', () => {
-    const historicoSalvo = JSON.parse(localStorage.getItem('historicoRequisicoes')) || [];
-    if (historicoContainer) historicoContainer.innerHTML = ""; 
-
-    if (historicoSalvo.length === 0) {
-      if (historicoContainer) historicoContainer.innerHTML = "<p style='color: var(--text-muted);'>Ainda não há pedidos submetidos.</p>";
-    } else {
-      historicoSalvo.reverse().forEach(pedido => {
-        let itensHTML = pedido.itens.map(i => `<li>${i.nome} [${i.categoria}] - <span style="color:var(--primary-color); font-weight: bold;">x${i.quantidade}</span></li>`).join('');
-        let obsHTML = pedido.observacoes ? `<p style="margin-top: 5px; font-size: 0.85rem; color: var(--text-muted);"><em>Obs: ${pedido.observacoes}</em></p>` : "";
-        
-        const div = document.createElement('div');
-        div.className = 'historico-item';
-        div.innerHTML = `
-          <span class="historico-data">${pedido.data}</span>
-          <p><strong style="color:var(--primary-color)">Colaborador:</strong> ${pedido.colaborador}</p>
-          <ul style="margin-top: 10px; list-style: inside; color: var(--text-muted); font-size: 0.9rem;">
-            ${itensHTML}
-          </ul>
-          ${obsHTML}
-        `;
-        if (historicoContainer) historicoContainer.appendChild(div);
-      });
-    }
-
-    if (mainPortal) mainPortal.classList.add('hidden');
-    if (historicoOverlay) historicoOverlay.classList.remove('hidden');
-  });
-}
-
-if (btnVoltarCatalogo) {
-  btnVoltarCatalogo.addEventListener('click', () => {
-    if (historicoOverlay) historicoOverlay.classList.add('hidden');
-    if (mainPortal) mainPortal.classList.remove('hidden');
-  });
-}
+    localStorage.setItem('historicoRequisicoes', JSON.stringify(histor
