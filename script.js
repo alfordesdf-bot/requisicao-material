@@ -35,19 +35,15 @@ const allCards = document.querySelectorAll('.card');
 const expandedImage = document.getElementById('expanded-image');
 const closeImageModal = document.getElementById('close-image-modal');
 
-// URLS DOS GOOGLE SHEETS (Podes usar o mesmo Apps Script central ou separados)
+// URLS DOS GOOGLE SHEETS
 const GOOGLE_SHEETS_HISTORICO_URL = "https://script.google.com/macros/s/AKfycbwrbwbbyZFX2odbXzit3LH8xbTfYD6KEaDNMAqPJFA1BVlKdKoeB2s-_FeL0h6eAKfu/exec";
 const GOOGLE_SHEETS_EPI_URL = "https://script.google.com/macros/s/AKfycbzcGUVImy1_SFqqYYi65MUYL3Zk6KTsUMu6i4I8_UNFO0XCz0CIWkfu9OLWuJbTUmfuIQ/exec";
 
 let carrinho = [];
 let nomeColaborador = "";
-let isGestorAtual = false;
-let isComercialAtual = false;
 
 // LISTA OFICIAL DE COLABORADORES DA UNIVERSAL MOTORS
 const COLABORADORES_UM = [
-  "alfordes manuel",
-  "alfordes manuel da costa joao",
   "alfordes joao",
   "andre faria",
   "andre marafona",
@@ -92,13 +88,26 @@ const COLABORADORES_UM = [
   "tiago freitas"
 ];
 
-// COMERCIAIS (Acesso a EPI + Marketing)
+// GRUPOS DE ACESSO
 const COMERCIAIS_UM = [
   "andre oliveira",
   "ruben torres",
   "tiago freitas",
   "jose barroso",
   "nuno alves"
+];
+
+const RESPONSAVEIS_DEPARTAMENTOS_UM = [
+  "eduardo pereira",
+  "bruno sa",
+  "luis novo"
+];
+
+const RESPONSAVEIS_UM = [
+  "alfordes joao",
+  "ines casanova",
+  "luis guimaraes",
+  "nuno caetano"
 ];
 
 function mostrarAlerta(mensagem) {
@@ -117,23 +126,52 @@ function removerAcentos(texto) {
   return String(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-function verificarSeGestor(nome) {
-  const listaGestores = ["bruno sa", "eduardo pereira", "luis novo", "alfordes manuel", "alfordes manuel da costa joao", "alfordes joao", "ines casanova"];
-  return listaGestores.includes(removerAcentos(nome));
-}
-
-function verificarSeComercial(nome) {
-  return COMERCIAIS_UM.includes(removerAcentos(nome));
+function verificarPerfilUtilizador(nome) {
+  const nomeLimpo = removerAcentos(nome);
+  
+  if (RESPONSAVEIS_UM.some(u => removerAcentos(u) === nomeLimpo)) {
+    return "RESPONSAVEL";
+  }
+  if (RESPONSAVEIS_DEPARTAMENTOS_UM.some(u => removerAcentos(u) === nomeLimpo)) {
+    return "RESPONSAVEL_DEPARTAMENTO";
+  }
+  if (COMERCIAIS_UM.some(u => removerAcentos(u) === nomeLimpo)) {
+    return "COMERCIAL";
+  }
+  return "RESTANTE";
 }
 
 function cardPermitidoParaUtilizador(cardTag) {
-  if (isGestorAtual) return true;
-  if (isComercialAtual) return (cardTag === 'epi' || cardTag === 'marketing');
-  return (cardTag === 'epi' || cardTag.includes('consumíveis'));
+  const perfil = verificarPerfilUtilizador(nomeColaborador);
+  const tagLower = cardTag.toLowerCase();
+
+  if (perfil === "RESPONSAVEL") {
+    return true; // Acesso a todas as categorias
+  }
+  
+  if (perfil === "RESPONSAVEL_DEPARTAMENTO") {
+    // EPI, Ferramenta, Material de Embalamento, Consumíveis Quadros e Consumíveis Motores
+    return (
+      tagLower === 'epi' || 
+      tagLower === 'ferramenta' || 
+      tagLower.includes('embalamento') || 
+      tagLower.includes('consumíveis') || 
+      tagLower.includes('consumiveis')
+    );
+  }
+  
+  if (perfil === "COMERCIAL") {
+    // Acesso a EPI e Marketing
+    return (tagLower === 'epi' || tagLower === 'marketing');
+  }
+  
+  // RESTANTES COLABORADORES: Apenas EPI
+  return (tagLower === 'epi');
 }
 
 function aplicarFiltrosVisualizacao() {
   const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : 'todos';
+  const perfil = verificarPerfilUtilizador(nomeColaborador);
 
   if (categoryFilter) {
     Array.from(categoryFilter.options).forEach(opt => {
@@ -143,16 +181,20 @@ function aplicarFiltrosVisualizacao() {
         opt.disabled = false;
         return;
       }
-      if (isGestorAtual) {
-        opt.style.display = 'block';
-        opt.disabled = false;
-      } else if (isComercialAtual) {
-        opt.style.display = (val === 'epi' || val === 'marketing') ? 'block' : 'none';
-        opt.disabled = !(val === 'epi' || val === 'marketing');
+
+      let permitidoNoDropdown = false;
+      if (perfil === "RESPONSAVEL") {
+        permitidoNoDropdown = true;
+      } else if (perfil === "RESPONSAVEL_DEPARTAMENTO") {
+        permitidoNoDropdown = (val === 'epi' || val === 'ferramenta' || val === 'material de embalamento' || val === 'consumíveis quadros' || val === 'consumíveis motores');
+      } else if (perfil === "COMERCIAL") {
+        permitidoNoDropdown = (val === 'epi' || val === 'marketing');
       } else {
-        opt.style.display = 'block';
-        opt.disabled = false;
+        permitidoNoDropdown = (val === 'epi');
       }
+
+      opt.style.display = permitidoNoDropdown ? 'block' : 'none';
+      opt.disabled = !permitidoNoDropdown;
     });
   }
 
@@ -198,8 +240,6 @@ function entrar() {
   }
 
   nomeColaborador = nomeDigitadoBruto;
-  isGestorAtual = verificarSeGestor(nomeColaborador);
-  isComercialAtual = verificarSeComercial(nomeColaborador);
 
   if (categoryFilter) categoryFilter.value = "Todos"; 
   aplicarFiltrosVisualizacao();
@@ -228,8 +268,6 @@ if (btnLogout) {
     carrinho = [];
     if (orderNotes) orderNotes.value = ""; 
     if (categoryFilter) categoryFilter.value = "Todos";
-    isGestorAtual = false;
-    isComercialAtual = false;
   });
 }
 
@@ -411,7 +449,6 @@ if (btnSubmitOrder) {
       observacoes: notasAdicionais
     };
 
-    // Enviar para o histórico geral (se aplicável)
     fetch(GOOGLE_SHEETS_HISTORICO_URL, {
       method: "POST",
       mode: "no-cors", 
@@ -419,7 +456,6 @@ if (btnSubmitOrder) {
       body: JSON.stringify(dadosSheet)
     }).catch(err => console.log("Erro no envio para o histórico geral:", err));
 
-    // Enviar para o Google Sheets principal onde o Apps Script separa por aba de categoria
     fetch(GOOGLE_SHEETS_EPI_URL, {
       method: "POST",
       mode: "no-cors", 
@@ -447,8 +483,6 @@ if (btnNewOrder) {
     if (usernameInput) usernameInput.value = "";
     nomeColaborador = "";
     if (categoryFilter) categoryFilter.value = "Todos";
-    isGestorAtual = false;
-    isComercialAtual = false;
     
     aplicarFiltrosVisualizacao();
 
