@@ -150,7 +150,6 @@ function cardPermitidoParaUtilizador(cardTag) {
   }
   
   if (perfil === "RESPONSAVEL_DEPARTAMENTO") {
-    // EPI, Ferramenta, Material de Embalamento, Consumíveis Quadros e Consumíveis Motores
     return (
       tagLower === 'epi' || 
       tagLower === 'ferramenta' || 
@@ -161,11 +160,9 @@ function cardPermitidoParaUtilizador(cardTag) {
   }
   
   if (perfil === "COMERCIAL") {
-    // Acesso a EPI e Marketing
     return (tagLower === 'epi' || tagLower === 'marketing');
   }
   
-  // RESTANTES COLABORADORES: Apenas EPI
   return (tagLower === 'epi');
 }
 
@@ -310,11 +307,12 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
 
     const sizeSelect = card.querySelector('.size-select');
     let nomeMaterial = tituloBase;
-    let tamanhoEscolhido = "";
+    let referenciaEscolhida = "";
 
     if (sizeSelect) {
-      tamanhoEscolhido = sizeSelect.value;
-      nomeMaterial = `${tituloBase} - ${tamanhoEscolhido}`;
+      referenciaEscolhida = sizeSelect.value; // Captura a referência definida no value da option
+      const textoOpcao = sizeSelect.options[sizeSelect.selectedIndex].text;
+      nomeMaterial = `${tituloBase} - ${textoOpcao}`;
     }
 
     if (quantidade > 0) {
@@ -327,7 +325,7 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
           tituloBase: tituloBase, 
           quantidade: quantidade, 
           categoria: categoriaMaterial,
-          tamanho: tamanhoEscolhido
+          referencia: referenciaEscolhida
         });
       }
 
