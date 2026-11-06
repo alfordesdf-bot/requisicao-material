@@ -148,7 +148,7 @@ function cardPermitidoParaUtilizador(cardTag) {
   const tagLower = cardTag.toLowerCase();
 
   if (perfil === "RESPONSAVEL") {
-    return true; // Acesso a todas as categorias
+    return true; 
   }
   
   if (perfil === "RESPONSAVEL_DEPARTAMENTO") {
@@ -299,23 +299,52 @@ if (imageModal) {
   });
 }
 
+// GERAR NOME LIMPO E EXATO IDÊNTICO À COLUNA B DA FOLHA STOCK
+function gerarCodigoStock(tituloBase, opcaoTexto, categoria) {
+  const tUpper = tituloBase.toUpperCase().trim();
+  const optUpper = opcaoTexto ? opcaoTexto.toUpperCase().trim() : "";
+  const catUpper = categoria.toUpperCase().trim();
+
+  if (optUpper && optUpper !== "CMP-ART SEPARADO" && !optUpper.includes("TAM")) {
+    if (tUpper.includes("CALÇA") || tUpper.includes("CALCA")) return `CALCA-TAM ${optUpper}`;
+    if (tUpper.includes("BOTA DE SEGURANÇA") || tUpper.includes("BOTA DE SEGURANCA")) return `BOTA DE SEGURANÇA ${optUpper}`;
+    if (tUpper.includes("POLO")) return `POLO-TAM ${optUpper}`;
+    if (tUpper.includes("SWEAT")) return `SWEAT-TAM ${optUpper}`;
+    if (tUpper.includes("T-SHIRT") || tUpper.includes("TSHIRT")) return `TSHIRT-TAM ${optUpper}`;
+    if (tUpper.includes("CASACO")) return `CASACO-TAM ${optUpper}`;
+    if (tUpper.includes("COLETE")) return `COLETE-TAM ${optUpper}`;
+    if (tUpper.includes("LUVAS DE COURO")) return `LUVAS DE COURO ${optUpper}`;
+    if (tUpper.includes("LUVAS DE NITRILO")) return `LUVAS DE NITRILO ${optUpper}`;
+    if (tUpper.includes("LUVAS DESCARTÁVEIS") || tUpper.includes("LUVAS DESCARTAVEIS")) return `LUVAS DESCARTÁVEIS ${optUpper}`;
+  }
+
+  if (optUpper.includes("TAM")) {
+    return optUpper;
+  }
+
+  return tUpper;
+}
+
 document.querySelectorAll('.btn-add-item').forEach(btn => {
   btn.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
-    const tituloBase = card.querySelector('.card-title').innerText;
+    const tituloBase = card.querySelector('.card-title').innerText.trim();
     const categoriaMaterial = card.querySelector('.tag').innerText.trim(); 
     const inputQuantidade = card.querySelector('.quantity-input');
     const quantidade = parseInt(inputQuantidade.value);
 
     const sizeSelect = card.querySelector('.size-select');
     let nomeMaterial = tituloBase;
-    let referenciaEscolhida = "";
+    let opcaoTexto = "";
+    let refValue = "";
 
     if (sizeSelect) {
-      referenciaEscolhida = sizeSelect.value; // Captura a referência definida no value da option
-      const textoOpcao = sizeSelect.options[sizeSelect.selectedIndex].text;
-      nomeMaterial = `${tituloBase} - ${textoOpcao}`;
+      refValue = sizeSelect.value;
+      opcaoTexto = sizeSelect.options[sizeSelect.selectedIndex].text;
+      nomeMaterial = `${tituloBase} - ${opcaoTexto}`;
     }
+
+    const codigoRefExato = gerarCodigoStock(tituloBase, opcaoTexto || refValue, categoriaMaterial);
 
     if (quantidade > 0) {
       const itemExistente = carrinho.find(item => item.nome === nomeMaterial && item.categoria === categoriaMaterial);
@@ -327,7 +356,7 @@ document.querySelectorAll('.btn-add-item').forEach(btn => {
           tituloBase: tituloBase, 
           quantidade: quantidade, 
           categoria: categoriaMaterial,
-          referencia: referenciaEscolhida
+          referencia: codigoRefExato
         });
       }
 
