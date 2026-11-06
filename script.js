@@ -99,10 +99,14 @@ const COMERCIAIS_UM = [
 
 const RESPONSAVEIS_DEPARTAMENTOS_UM = [
   "eduardo pereira",
+  "eduardo pinhal",
   "bruno sa",
+  "fernando azevedo",
   "luis novo",
+  "edgar pereira"
   "andre vilar",
-  "carlos fonseca",  
+  "carlos fonseca", 
+  
 ];
 
 const RESPONSAVEIS_UM = [
