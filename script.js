@@ -105,8 +105,7 @@ const RESPONSAVEIS_DEPARTAMENTOS_UM = [
   "luis novo",
   "edgar pereira",
   "andre vilar",
-  "carlos fonseca", 
-  
+  "carlos fonseca"
 ];
 
 const RESPONSAVEIS_UM = [
