@@ -221,35 +221,44 @@ function aplicarFiltrosVisualizacao() {
 }
 
 function entrar() {
-  if (!usernameInput) return;
-  const nomeDigitadoBruto = usernameInput.value.trim();
-  
-  if (nomeDigitadoBruto === "") {
-    mostrarAlerta("Por favor, digite o seu nome para continuar.");
-    return;
+  try {
+    if (!usernameInput) {
+      mostrarAlerta("Erro: Campo de utilizador não encontrado.");
+      return;
+    }
+    
+    const nomeDigitadoBruto = usernameInput.value.trim();
+    
+    if (nomeDigitadoBruto === "") {
+      mostrarAlerta("Por favor, digite o seu nome para continuar.");
+      return;
+    }
+
+    if (nomeDigitadoBruto.split(/\s+/).length < 2) {
+      mostrarAlerta("Por favor, coloque o seu primeiro e último nome (ex: João Silva).");
+      return;
+    }
+
+    const nomeLimpo = removerAcentos(nomeDigitadoBruto);
+    const colaboradorExiste = COLABORADORES_UM.includes(nomeLimpo);
+
+    if (!colaboradorExiste) {
+      mostrarAlerta("Utilizador não registado no sistema. (Nome detetado: '" + nomeLimpo + "')");
+      return;
+    }
+
+    nomeColaborador = nomeDigitadoBruto;
+
+    if (categoryFilter) categoryFilter.value = "Todos"; 
+    aplicarFiltrosVisualizacao();
+
+    if (displayUsername) displayUsername.textContent = nomeColaborador;
+    if (loginOverlay) loginOverlay.classList.add('hidden');
+    if (mainPortal) mainPortal.classList.remove('hidden');
+
+  } catch (err) {
+    mostrarAlerta("Erro crítico no login: " + err.message);
   }
-
-  if (nomeDigitadoBruto.split(/\s+/).length < 2) {
-    mostrarAlerta("Por favor, coloque o seu primeiro e último nome (ex: João Silva).");
-    return;
-  }
-
-  const nomeLimpo = removerAcentos(nomeDigitadoBruto);
-  const colaboradorExiste = COLABORADORES_UM.includes(nomeLimpo);
-
-  if (!colaboradorExiste) {
-    mostrarAlerta("Utilizador não registado no sistema. Aplicação para uso exclusivo de colaboradores da UM.");
-    return;
-  }
-
-  nomeColaborador = nomeDigitadoBruto;
-
-  if (categoryFilter) categoryFilter.value = "Todos"; 
-  aplicarFiltrosVisualizacao();
-
-  if (displayUsername) displayUsername.textContent = nomeColaborador;
-  if (loginOverlay) loginOverlay.classList.add('hidden');
-  if (mainPortal) mainPortal.classList.remove('hidden');
 }
 
 if (btnLogin) {
