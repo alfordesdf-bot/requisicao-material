@@ -66,6 +66,7 @@ const COLABORADORES_UM = [
   "fernando mineiro",
   "guilherme ferreira",
   "ines casanova",
+  "joao barbosa",
   "joao paulo",
   "jose barroso",
   "kyrylo savchenko",
@@ -112,6 +113,7 @@ const RESPONSAVEIS_UM = [
   "alfordes joao",
   "ines casanova",
   "luis guimaraes",
+  "joao barbosa",
   "nuno caetano"
 ];
 
